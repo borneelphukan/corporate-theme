@@ -1,9 +1,10 @@
 import React from "react";
 
-const Button = ({ bgColor, textColor, text }) => {
+const Button = ({ bgColor, textColor, text, type = "button" as any, className = "" }) => {
   return (
     <button
-      className={`bg-${bgColor} text-${textColor} my-10 py-3 px-7 rounded-md shadow-lg hover:bg-black hover:text-white border border-solid border-black`}
+      type={type}
+      className={`bg-${bgColor} text-${textColor} my-10 py-3 px-7 rounded-md shadow-lg hover:bg-black hover:text-white border border-solid border-black ${className}`}
     >
       {text}
     </button>

@@ -1,5 +1,5 @@
 "use client";
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import TestimonialsBanner from "@/components/Testimonials/TestimonialsBanner";
 import TestimonialsCrumb from "@/components/breadcrumbs/TestimonialsCrumb";

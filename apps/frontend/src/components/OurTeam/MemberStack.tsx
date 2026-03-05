@@ -1,6 +1,6 @@
 import React from "react";
 import ourTeamData from "@/data/ourteam-data.json"; // Update the path accordingly
-import MembersCard from "../card/MembersCard.js";
+import MembersCard from "../card/MembersCard";
 
 const MemberStack = () => {
   return (

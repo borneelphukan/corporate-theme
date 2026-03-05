@@ -66,7 +66,7 @@ const ContactForm = () => {
       <div className="container px-6 py-10 mx-auto">
         <div className="text-center">
           <label className="text-orange-500 font-semibold text-sm mb-2">
-            Let's get in touch
+            Let&apos;s get in touch
           </label>
           <h2 className="text-3xl font-bold text-center mb-8">
             How can we help you ?

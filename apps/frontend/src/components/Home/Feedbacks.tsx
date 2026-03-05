@@ -1,6 +1,6 @@
 import React from "react";
 import FeedbackCard from "../card/FeedbackCard";
-import feedbackData from "@/data/feedbackData";
+import feedbackData from "@/data/feedbackData.json";
 
 const Feedbacks = () => {
   return (
