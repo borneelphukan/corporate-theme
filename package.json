@@ -1,36 +1,17 @@
 {
-  "name": "corporate-theme",
-  "version": "0.1.0",
+  "name": "corporate-theme-monorepo",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.4.2",
-    "@fortawesome/free-brands-svg-icons": "^6.4.2",
-    "@fortawesome/free-solid-svg-icons": "^6.4.2",
-    "@fortawesome/react-fontawesome": "^0.2.0",
-    "autoprefixer": "10.4.14",
-    "emailjs-com": "^3.2.0",
-    "eslint": "8.47.0",
-    "eslint-config-next": "13.4.13",
-    "font-awesome": "^4.7.0",
-    "mongodb": "^6.3.0",
-    "next": "13.4.13",
-    "postcss": "8.4.27",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-icons": "^4.10.1",
-    "react-switch": "^7.0.0",
-    "react-toastify": "^10.0.5",
-    "tailwindcss": "3.3.3"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean": "rm -rf node_modules"
   },
   "devDependencies": {
-    "@types/node": "20.10.0",
-    "@types/react": "18.2.38"
+    "turbo": "^2.3.3",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
   },
-  "packageManager": "pnpm@8.15.3+sha512.dd85cd6eca6417c6f73db32ba1eb4767ffb4cba4f5bf0727846722c92b6b9e56a2cc218b11385bbc2b21f18a16a67da77aceae9b61a0f56a1643b25e1fb6a605"
+  "packageManager": "pnpm@8.15.3"
 }

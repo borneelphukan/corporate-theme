@@ -1,0 +1,1 @@
+{"version":3,"file":"tag-input.d.ts","sourceRoot":"","sources":["../../../lib/components/tag-input/tag-input.tsx"],"names":[],"mappings":"AA0BA,QAAA,MAAM,QAAQ;QAXR,MAAM;WACH,MAAM;WACN,MAAM,EAAE;cACL,CAAC,IAAI,EAAE,MAAM,EAAE,KAAK,IAAI;eACvB,CAAC,GAAG,EAAE,MAAM,KAAK,OAAO;gBACvB,OAAO;WACZ,MAAM;YACL,MAAM;cACJ,MAAM,EAAE;oDA2OnB,CAAC;AAEF,OAAO,EAAE,QAAQ,EAAE,CAAC"}
