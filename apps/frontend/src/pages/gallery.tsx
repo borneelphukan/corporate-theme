@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import GalleryBanner from "@/components/Gallery/GalleryBanner";
+import Banner from "@/components/banner";
 import Breadcrumb from "@/components/breadcrumb";
 
 const photos = [
@@ -25,7 +25,7 @@ const Gallery = () => {
     document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
   };
 
-  const handleClosePhoto = () => {
+  const handleCloseModal = () => {
     setSelectedPhotoIndex(null);
     document.body.style.overflow = "auto";
   };
@@ -52,11 +52,12 @@ const Gallery = () => {
       
       <div className="relative min-h-screen w-full bg-slate-50/50 overflow-hidden">
         {/* Radiant blurred background elements (Consistency with Contact Page) */}
-        <div className="absolute top-[0%] left-[0%] w-[600px] h-[600px] bg-orange-400/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        <div className="absolute top-[10%] left-[5%] w-[600px] h-[600px] bg-blue-300/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        <div className="absolute top-[40%] right-[10%] w-[700px] h-[700px] bg-purple-300/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
         <div className="absolute bottom-[20%] right-[0%] w-[500px] h-[500px] bg-sky-400/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
         <div className="relative z-10 pb-20">
-          <GalleryBanner />
+          <Banner title="Our Gallery" subtitle="Gallery" bgClass="gallery-cover" theme="light" />
           <Breadcrumb items={[{ label: "Events", href: "/" }, { label: "Gallery" }]} />
           
           <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 mt-10">
@@ -100,12 +101,12 @@ const Gallery = () => {
       {selectedPhotoIndex !== null && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-10"
-          onClick={handleClosePhoto}
+          onClick={handleCloseModal}
         >
           {/* Close Button */}
           <button
             className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all z-50 backdrop-blur-md"
-            onClick={handleClosePhoto}
+            onClick={handleCloseModal}
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -143,13 +143,10 @@ const ContactForm = () => {
                   rows={6}
                 />
               </div>
-              <div className="flex items-center justify-between my-[-9%]">
-                <Button
-                  bgColor="white"
-                  textColor="black"
-                  text="Send"
-                  type="submit"
-                />
+              <div className="flex items-center justify-between pt-4">
+                <Button variant="primary" type="submit">
+                  Send
+                </Button>
               </div>
             </form>
             <ToastContainer />

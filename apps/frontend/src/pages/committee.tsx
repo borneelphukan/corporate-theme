@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import CommitteeBanner from "@/components/Committee/CommitteeBanner";
+import Banner from "@/components/banner";
 import Breadcrumb from "@/components/breadcrumb";
 
 const meetingDecisions = {
@@ -59,7 +59,7 @@ const Committee = () => {
         <div className="absolute -bottom-[10%] left-[10%] w-[600px] h-[600px] bg-sky-400/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
         <div className="relative z-10 pb-20">
-          <CommitteeBanner />
+          <Banner title="Our Committee" subtitle="Meet The Heads" bgClass="committee-cover" theme="dark" />
           <Breadcrumb items={[{ label: "Our Society" }, { label: "Committee" }]} linkClasses="inline-flex items-center text-sm font-normal text-gray-700 hover:text-orange-500" />
 
           <div className="max-w-6xl mx-auto px-6 md:px-12 mt-16">

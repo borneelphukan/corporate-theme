@@ -60,25 +60,16 @@ const CircularScrollProgressBar = () => {
     >
       <div className="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center group">
         <svg className="absolute inset-0 transform -rotate-90 w-full h-full drop-shadow-md">
-          {/* Background track circle */}
-          <circle
-            cx="50%"
-            cy="50%"
-            r="44%"
-            fill="transparent"
-            stroke="#e5e7eb" // gray-200
-            strokeWidth="8%"
-          />
           {/* Active progress circle */}
           <circle
             cx="50%"
             cy="50%"
             r="44%"
             fill="transparent"
-            stroke="#EA580C" // blue-500
-            strokeWidth="8%"
+            stroke="#EA580C"
+            strokeWidth="4%"
             strokeLinecap="round"
-            pathLength="100" // Simplifies dashboard array math greatly!
+            pathLength="100"
             strokeDasharray="100"
             strokeDashoffset={100 - progress}
           />

@@ -2,8 +2,9 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import RulesBanner from "@/components/Rules/RulesBanner";
+import Banner from "@/components/banner";
 import Breadcrumb from "@/components/breadcrumb";
+import Button from "@/components/button";
 
 const rulesData = [
   {
@@ -28,23 +29,22 @@ const rulesData = [
       </svg>
     ),
     rules: [
-      "All visitors must sign in at the main gate security cabin.",
-      "Delivery personnel are allowed only up to the designated lobby areas unless pre-approved.",
-      "Maids and support staff must carry valid society ID cards at all times.",
+      "All guests must register at the reception via the society app before entering.",
+      "Delivery personnel are allowed only up to the lobby drops unless approved.",
+      "Security guards are authorized to question unknown persons on the premises.",
     ]
   },
   {
-    category: "Amenities Usage",
+    category: "Facilities & Amenities",
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
       </svg>
     ),
     rules: [
-      "The clubhouse and pool are open from 6:00 AM to 10:00 PM.",
-      "Proper swimming attire is mandatory for pool usage.",
-      "Children under 12 must be accompanied by an adult in all amenity areas.",
-      "Gym equipment must be wiped down after use.",
+      "The clubhouse and gym are restricted to residents only. Guests must be accompanied.",
+      "Gym hours are from 5:30 AM to 10:30 PM. Proper attire is mandatory.",
+      "Swimming pool is accessible only during designated operational hours.",
     ]
   },
   {
@@ -99,8 +99,8 @@ const Rules = () => {
         <div className="absolute -bottom-[10%] left-[10%] w-[600px] h-[600px] bg-sky-400/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
         <div className="relative z-10 pb-20">
-          <RulesBanner />
-          <Breadcrumb items={[{ label: "Our Society" }, { label: "Rules" }]} linkClasses="inline-flex items-center text-sm font-normal text-gray-700" />
+          <Banner title="Rules & Regulations" subtitle="Our Policies" bgClass="rules-cover" theme="light" />
+          <Breadcrumb items={[{ label: "Our Society" }, { label: "Rules & Regulations" }]} />
 
           <div className="max-w-4xl mx-auto px-6 md:px-12 mt-10">
             {/* Header Section */}
@@ -169,12 +169,12 @@ const Rules = () => {
             
             {/* Download/Print Action (Static UI representation) */}
             <div className="mt-12 flex justify-center">
-              <button className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg shadow-orange-500/30 transition-all transform hover:scale-105 active:scale-95">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                <span>Download Rulebook PDF</span>
-              </button>
+              <Button 
+                variant="primary" 
+                icon={{ left: <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg> }}
+              >
+                Download Rulebook PDF
+              </Button>
             </div>
 
           </div>

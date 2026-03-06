@@ -30,7 +30,7 @@ const Navbar = () => {
     
     if (path === "/") setSelectedLink("Home");
     else if (path.startsWith("/committee") || path.startsWith("/amenities") || path.startsWith("/rules")) setSelectedLink("Our Society");
-    else if (path.startsWith("/maintenance-pay") || path.startsWith("/help-desk") || path.startsWith("/vendors")) setSelectedLink("Services");
+    else if (path.startsWith("/contributions") || path.startsWith("/help-desk") || path.startsWith("/vendors")) setSelectedLink("Services");
     else if (path.startsWith("/gallery") || path.startsWith("/upcoming-events")) setSelectedLink("Events");
     else if (path.startsWith("/contact")) setSelectedLink("Contact Us");
     else setSelectedLink("Home");
@@ -144,8 +144,8 @@ const Navbar = () => {
               style={{ top: "80%" }}
             >
               <li className="py-2">
-                <Link className="text-black hover:text-orange-500" href="/maintenance-pay">
-                  Maintenance Pay
+                <Link className="text-black hover:text-orange-500" href="/contributions">
+                  Contributions
                 </Link>
               </li>
               <li className="py-2">
@@ -288,8 +288,8 @@ const Navbar = () => {
           <div className={`overflow-hidden transition-all duration-300 bg-gray-50 ${showMobileServicesSubNav ? "max-h-[500px]" : "max-h-0"}`}>
             <ul className="w-full flex flex-col">
               <li>
-                <Link href="/maintenance-pay" onClick={toggleMobileMenu} className="block w-full text-left py-3 px-10 text-gray-600 hover:text-orange-500 hover:bg-gray-100 transition-colors">
-                  Maintenance Pay
+                <Link href="/contributions" onClick={toggleMobileMenu} className="block w-full text-left py-3 px-10 text-gray-600 hover:text-orange-500 hover:bg-gray-100 transition-colors">
+                  Contributions
                 </Link>
               </li>
               <li>

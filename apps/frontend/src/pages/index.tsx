@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Link from "next/link";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Button from "@/components/button";
 
 const bannerImages = [
   "url('/cover.webp')",
@@ -177,8 +178,8 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              <div className="mt-6 pt-4 border-t border-gray-100 text-center">
-                <Link href="/committee" className="text-sm text-blue-500 hover:text-blue-600 font-semibold group flex items-center justify-center">
+              <div className="mt-6 pt-4 border-t border-gray-100 text-center flex justify-center">
+                <Link href="/committee" className="text-sm text-blue-500 hover:text-blue-600 font-semibold flex items-center justify-center group">
                   View All Decisions <ArrowForwardIcon className="ml-1 w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
@@ -222,12 +223,15 @@ const Home = () => {
               </li>
             </ul>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
-              <Link href="/contact" className="group flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-lg shadow-blue-600/30">
-                <span className="flex items-center">
-                  Contact Us <ArrowForwardIcon className="ml-2 w-5 h-5 text-white transform group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-              </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full max-w-sm mx-auto">
+              <Button 
+                variant="primary" 
+                href="/contact" 
+                className="w-full sm:w-auto" 
+                icon={{ right: <ArrowForwardIcon className="w-5 h-5 text-white transform group-hover:translate-x-1 transition-transform duration-300" /> }}
+              >
+                Contact Us
+              </Button>
             </div>
           </div>
         </div>

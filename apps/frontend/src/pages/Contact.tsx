@@ -3,7 +3,7 @@ import React from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import DetailsStack from "@/components/Contact/DetailsStack";
 import Breadcrumb from "@/components/breadcrumb";
-import ContactBanner from "@/components/Contact/ContactBanner";
+import Banner from "@/components/banner";
 import ContactForm from "@/components/Contact/ContactForm";
 
 const Contact = () => {
@@ -16,7 +16,7 @@ const Contact = () => {
         <div className="absolute -bottom-[10%] left-[10%] w-[600px] h-[600px] bg-sky-400/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
         <div className="relative z-10 pb-20">
-          <ContactBanner />
+          <Banner title="Get in Touch" subtitle="Contact Us" bgClass="contact-cover" theme="light" />
           <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact Us" }]} />
           
           <div className="max-w-4xl mx-auto px-6 md:px-12 mt-12 text-center">
