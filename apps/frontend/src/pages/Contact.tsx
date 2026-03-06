@@ -2,17 +2,26 @@
 import React from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import DetailsStack from "@/components/Contact/DetailsStack";
-import ContactCrumb from "@/components/breadcrumbs/ContactCrumb";
+import Breadcrumb from "@/components/breadcrumb";
 import ContactBanner from "@/components/Contact/ContactBanner";
 import ContactForm from "@/components/Contact/ContactForm";
 
 const Contact = () => {
   return (
     <DefaultLayout>
-      <ContactBanner />
-      <ContactCrumb />
-      <DetailsStack />
-      <ContactForm/>
+      <div className="relative min-h-screen w-full bg-slate-50/50 overflow-hidden">
+        {/* Radiant blurred background elements */}
+        <div className="absolute -top-[10%] -left-[10%] w-[800px] h-[800px] bg-blue-400/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        <div className="absolute top-[20%] -right-[10%] w-[700px] h-[700px] bg-purple-400/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        <div className="absolute -bottom-[10%] left-[10%] w-[600px] h-[600px] bg-sky-400/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+
+        <div className="relative z-10 pb-20">
+          <ContactBanner />
+          <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Contact Us" }]} />
+          <DetailsStack />
+          <ContactForm/>
+        </div>
+      </div>
     </DefaultLayout>
   );
 };

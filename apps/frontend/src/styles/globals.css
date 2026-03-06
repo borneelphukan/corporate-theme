@@ -95,3 +95,17 @@ body {
   height: 45vh;
   /* Adjust as needed */
 }
+
+.gallery-cover {
+  background-image: url("/images/banners/contact-banner.jpeg"); /* Placeholder, recommend updating with a gallery banner */
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+}
+
+.rules-cover {
+  background-image: url("/images/banners/about-banner.jpeg"); /* Placeholder */
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+}

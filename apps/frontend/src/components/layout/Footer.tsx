@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className="bg-black text-white text-center py-8 relative">
       <div className="container mx-auto flex flex-col items-center justify-center">
-        <div className="w-full max-w-screen-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-4 md:px-8 flex-grow">
+        <div className="w-full max-w-screen-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-8 flex-grow">
           {/* Column 1 */}
           <div className="mb-8">
             <h2 className="text-3xl font-semibold mb-4">
@@ -18,128 +18,120 @@ const Footer = () => {
               This site has been set up purely for demonstration purposes and
               more.
             </p>
-            <h1 className="text-xl font-semibold py-2">Contact Info</h1>
-            <p className="text-sm">
-              Email: <span className="text-slate-400">{contactData.email}</span>
-            </p>
-            <p className="text-sm my-1">
-              Address:{" "}
-              <span className="text-slate-400">{contactData.address}</span>
-            </p>
-            <p className="text-sm my-1">
-              Phone: <span className="text-slate-400">{contactData.fax}</span>
-            </p>
           </div>
 
           {/* Column 2 */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-2">Customer</h2>
+            <h2 className="text-xl font-semibold mb-2">Society</h2>
             {/* Your content for column 2 */}
             <ul className="text-left px-24">
-              <li className="py-2">
+              <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/committee"
                 >
-                  Get BDESIGN
+                  Committee
                 </Link>
               </li>
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/amenities"
                 >
-                  Documentation
+                  Amenities
                 </Link>
               </li>
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/rules"
                 >
-                  Privacy Policy
+                  Rules
                 </Link>
               </li>
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/maintenance-pay"
                 >
-                  Pricing
+                  Maintenance Pay
                 </Link>
               </li>
               <li className="py-1">
-                <li className="py-1">
-                  <Link
-                    className="text-sm text-slate-400 hover:text-orange-500"
-                    href="/Contact"
-                  >
-                    Contact Us
-                  </Link>
-                </li>
+                <Link
+                  className="text-sm text-slate-400 hover:text-orange-500"
+                  href="/help-desk"
+                >
+                  Help Desk
+                </Link>
+              </li>
+              <li className="py-1">
+                <Link
+                  className="text-sm text-slate-400 hover:text-orange-500"
+                  href="/vendors"
+                >
+                  Vendors
+                </Link>
+              </li>
+              <li className="py-1">
+                <Link
+                  className="text-sm text-slate-400 hover:text-orange-500"
+                  href="/gallery"
+                >
+                  Gallery
+                </Link>
+              </li>
+              <li className="py-1">
+                <Link
+                  className="text-sm text-slate-400 hover:text-orange-500"
+                  href="/upcoming-events"
+                >
+                  Upcoming Events
+                </Link>
               </li>
             </ul>
           </div>
 
           {/* Column 3 */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">Company</h2>
+            <h2 className="text-xl font-semibold mb-4">Tenants</h2>
             {/* Your content for column 3 */}
             <ul className="text-left px-24">
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="/AboutUs"
+                  href="/leasing-info"
                 >
-                  About Us
+                  Leasing Info
                 </Link>
               </li>
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/move-in-guidelines"
                 >
-                  Career
+                  Move-in Guidelines
                 </Link>
               </li>
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/tenant-portal"
                 >
-                  Projects
+                  Tenant Portal
                 </Link>
               </li>
               <li className="py-1">
                 <Link
                   className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
+                  href="/notice-board"
                 >
-                  Join Our Team
-                </Link>
-              </li>
-              <li className="py-1">
-                <Link
-                  className="text-sm text-slate-400 hover:text-orange-500"
-                  href="#"
-                >
-                  Our Blog
+                  Notice Board
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4 */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Our Location</h2>
-            {/* Your content for column 4 */}
-            <Image
-              src={"/images/footer-map.jpg"}
-              alt="Map"
-              width={500}
-              height={500}
-            />
-          </div>
         </div>
       </div>
 

@@ -3,14 +3,14 @@ import React from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import RoleCardStack from "@/components/Services/RoleCardStack";
 import ServiceBanner from "@/components/Services/ServiceBanner";
-import ServiceCrumb from "@/components/breadcrumbs/ServiceCrumb";
+import Breadcrumb from "@/components/breadcrumb";
 
 const Services = () => {
   return (
     <DefaultLayout>
       <ServiceBanner />
       <div className="container mx-auto">
-        <ServiceCrumb />
+        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Services" }]} />
         <div className="max-w-8xl mx-auto text-center text-lg">
           <RoleCardStack />
         </div>

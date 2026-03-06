@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import TestimonialsBanner from "@/components/Testimonials/TestimonialsBanner";
-import TestimonialsCrumb from "@/components/breadcrumbs/TestimonialsCrumb";
-import FeedbackCard from "@/components/card/FeedbackCard";
+import Breadcrumb from "@/components/breadcrumb";
 
 const Testimonials = () => {
   const [testimonialsData, setTestimonialsData] = useState([]);
@@ -26,20 +25,14 @@ const Testimonials = () => {
     <DefaultLayout>
       <TestimonialsBanner />
       <div className="container mx-auto">
-        <TestimonialsCrumb />
+        <Breadcrumb 
+          items={[{ label: "Home", href: "/" }, { label: "Testimonials" }]}
+          olClasses="container inline-flex items-center space-x-1 md:space-x-3 m-4"
+          linkClasses="inline-flex items-center text-sm font-normal text-gray-700 hover:text-orange-500"
+          activeClasses="ml-1 text-sm font-normal text-gray-700 md:ml-2"
+        />
         <div className="max-w-8xl mx-auto text-center text-lg p-5 my-10">
-          <div className="px-auto overflow-hidden grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-8 p-1">
-            {testimonialsData.map((data, index) => (
-              <FeedbackCard
-                key={index}
-                avatar={data.avatar}
-                name={data.name}
-                comment={data.comment}
-                stars={data.stars}
-                role={data.role}
-              />
-            ))}
-          </div>
+
         </div>
       </div>
     </DefaultLayout>

@@ -1,7 +1,7 @@
-import Navbar from "@/components/layoutComponents/Navbar";
-import CircularProgressBar from "@/components/layoutComponents/CircularProgressBar";
-import Footer from "@/components/layoutComponents/Footer";
-import Loader from "@/components/layoutComponents/Loader";
+import Navbar from "@/components/layout/Navbar";
+import CircularProgressBar from "@/components/layout/CircularProgressBar";
+import Footer from "@/components/layout/Footer";
+import Loader from "@/components/layout/Loader";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 

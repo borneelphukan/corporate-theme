@@ -5,7 +5,6 @@ import Banner from "@/components/Home/Banner";
 import MainCardStack from "@/components/Home/MainCardStack";
 import Features from "@/components/Home/Features";
 import Recruitment from "@/components/Home/Recruitment";
-import Feedbacks from "@/components/Home/Feedbacks";
 import PriceStack from "@/components/Home/PriceStack";
 import Jumbotron from "@/components/Home/Jumbotron";
 
@@ -18,7 +17,6 @@ const Home = () => {
       <Recruitment />
       <Jumbotron />
       <PriceStack />
-      <Feedbacks />
     </DefaultLayout>
   );
 };
