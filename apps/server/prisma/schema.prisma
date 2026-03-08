@@ -11,7 +11,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -31,4 +30,14 @@ model Announcement {
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Resident {
+  id        Int      @id @default(autoincrement())
+  avatar    String?
+  name      String
+  residence String
+  phone_no  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 
 export interface Resident {
   name: string;
-  flat: string;
-  phone: string;
+  flat?: string;
+  residence?: string;
+  phone?: string;
+  phone_no?: string;
 }
 
 export interface Props {
@@ -101,10 +103,10 @@ const Table = ({
                       {resident.name}
                     </td>
                     <td className={`py-3 px-4 ${apartmentTextColor} font-bold text-sm tracking-wide ${apartmentBgColor} whitespace-nowrap`}>
-                      {resident.flat}
+                      {resident.residence || resident.flat}
                     </td>
                     <td className="py-3 px-4 text-gray-500 font-medium text-sm text-right pr-6 whitespace-nowrap font-mono">
-                      {resident.phone}
+                      {resident.phone_no || resident.phone}
                     </td>
                     {columns.map((col, colIdx) => {
                       const status = getStatus(idx, colIdx);

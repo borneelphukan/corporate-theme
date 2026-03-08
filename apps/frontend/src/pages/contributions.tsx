@@ -7,7 +7,6 @@ import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import residentsData from "@/data/residents.json";
 
 const years = ["2023", "2024", "2025"];
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -40,7 +39,6 @@ const getSecurityStatus = (residentIndex: number, year: string) => {
   return (seed % 10 > 1) ? 1 : -1; 
 };
 
-const residents = residentsData;
 
 const securityFees = [
   { item: "24/7 Gate Security Guard", amount: "₹ 3,500" },
@@ -52,6 +50,23 @@ const totalSecurityFee = "₹ 5,000";
 const MaintenancePay = () => {
   const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [securityStartIdx, setSecurityStartIdx] = useState<number>(Math.max(0, securityYearsAll.length - 4));
+  const [residents, setResidents] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchResidents = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/residents');
+        if (response.ok) {
+          const data = await response.json();
+          setResidents(data);
+        }
+      } catch (error) {
+        console.error('Error fetching residents:', error);
+      }
+    };
+    fetchResidents();
+  }, []);
+
   const visibleSecurityYears = securityYearsAll.slice(securityStartIdx, securityStartIdx + 4);
 
   return (

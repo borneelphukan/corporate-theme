@@ -3,10 +3,11 @@ import Head from 'next/head';
 import DefaultLayout from '@/layout/DefaultLayout';
 import { useRouter } from 'next/router';
 import Announcements from '@/components/Announcements';
+import Residents from '@/components/Residents';
 
 const AdminDashboard = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents'>('dashboard');
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -32,12 +33,21 @@ const AdminDashboard = () => {
         </svg>
       )
     },
+    { 
+      id: 'residents', 
+      label: 'Residents', 
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      )
+    },
   ];
 
   return (
     <DefaultLayout>
       <Head>
-        <title>{activeTab === 'dashboard' ? 'Dashboard' : 'Announcements'} | Legacy Apartment Admin</title>
+        <title>{activeTab === 'dashboard' ? 'Dashboard' : activeTab === 'announcements' ? 'Announcements' : 'Residents'} | Legacy Apartment Admin</title>
       </Head>
 
       <div className="flex min-h-screen bg-gray-50 text-gray-100">
@@ -125,9 +135,13 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'announcements' ? (
             <div className="max-w-5xl mx-auto">
               <Announcements />
+            </div>
+          ) : (
+            <div className="max-w-5xl mx-auto">
+              <Residents />
             </div>
           )}
         </main>

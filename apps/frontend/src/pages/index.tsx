@@ -5,13 +5,11 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { Button } from "@legacy-apartment/ui";
-import residentsData from "@/data/residents.json";
 
 const bannerImages = [
   "url('/cover.webp')",
 ];
 
-const residents = residentsData;
 
 const AnimatedCounter = ({ end, duration = 2000, suffix = "" }: { end: number, duration?: number, suffix?: string }) => {
   const [count, setCount] = useState(0);
@@ -48,6 +46,7 @@ const Home = () => {
   const [currentResidentIndex, setCurrentResidentIndex] = useState(0);
   const [itemsPerSlide, setItemsPerSlide] = useState(16);
   const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [residents, setResidents] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -61,7 +60,19 @@ const Home = () => {
         console.error('Error fetching announcements:', error);
       }
     };
+    const fetchResidents = async () => {
+      try {
+        const response = await fetch('http://localhost:4000/residents');
+        if (response.ok) {
+          const data = await response.json();
+          setResidents(data);
+        }
+      } catch (error) {
+        console.error('Error fetching residents:', error);
+      }
+    };
     fetchAnnouncements();
+    fetchResidents();
   }, []);
 
   useEffect(() => {
@@ -300,17 +311,21 @@ const Home = () => {
                 <div key={slideIdx} className="w-full flex-shrink-0 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 content-start gap-4 p-4 md:p-6 bg-white min-h-[400px]">
                   {chunk.map((resident, idx) => (
                     <div key={idx} className="group flex items-center p-3 md:p-4 bg-slate-50 rounded-2xl hover:bg-white transition-all duration-300 cursor-pointer border border-transparent hover:border-blue-100 hover:shadow-lg hover:-translate-y-1">
-                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-white shadow-sm flex-shrink-0 mr-4 group-hover:border-blue-50 transition-colors">
-                        <img 
-                          src={resident.image} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                          alt={resident.name} 
-                        />
+                      <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-white shadow-sm flex-shrink-0 mr-4 group-hover:border-blue-50 transition-colors bg-gray-100 flex items-center justify-center">
+                        {resident.avatar || resident.image ? (
+                           <img 
+                            src={resident.avatar || resident.image} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                            alt={resident.name} 
+                           />
+                        ) : (
+                          <div className="text-gray-400 font-bold text-xl">{resident.name.charAt(0)}</div>
+                        )}
                       </div>
                       <div className="flex flex-col text-left overflow-hidden">
                         <h3 className="text-sm md:text-base font-bold text-gray-800 mb-1 truncate">{resident.name}</h3>
                         <span className="inline-block border border-blue-200 bg-blue-50 text-blue-600 text-[10px] md:text-xs font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full shadow-sm w-max">
-                          Flat {resident.flat}
+                          Flat {resident.residence || resident.flat}
                         </span>
                       </div>
                     </div>

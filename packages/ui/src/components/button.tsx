@@ -28,6 +28,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   };
   label?: string;
   asChild?: boolean;
+  href?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -40,6 +41,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   asChild = false,
   label,
   children,
+  href,
   ...props
 }, ref) => {
   const isEffectivelyDisabled = isLoading || props.disabled;
@@ -47,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   const isIconOnly = size === "icon" || (!hasContent && !!(icon?.left || icon?.right));
 
   const variantClasses: Record<ButtonVariant, string> = {
-    primary: "text-white bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-500/30",
+    primary: "text-white bg-orange-500 hover:bg-orange-600",
     success: "text-white bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30",
     destructive: "text-white bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/30",
     outline: "text-gray-100 border border-gray-400 hover:bg-gray-400/10 shadow-sm",
@@ -86,6 +88,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       {icon?.right}
     </div>
   );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        className={combinedClassName}
+        {...props as any}
+      >
+        {content}
+      </a>
+    );
+  }
 
   return (
     <button
