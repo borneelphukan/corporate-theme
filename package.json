@@ -1,5 +1,5 @@
 {
-  "name": "corporate-theme-monorepo",
+  "name": "legacy-apartment-monorepo",
   "private": true,
   "engines": {
     "node": ">=20"

@@ -2,10 +2,7 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import Breadcrumb from "@/components/breadcrumb";
-import Banner from "@/components/banner";
-import Button from "@/components/button";
-import Table from "@/components/table";
+import { Breadcrumb, Banner, Button, Table } from "@legacy-apartment/ui";
 import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";

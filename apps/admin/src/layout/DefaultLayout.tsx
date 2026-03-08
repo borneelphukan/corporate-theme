@@ -1,4 +1,4 @@
-import { Navbar, CircularProgressBar, Footer, Loader } from "@legacy-apartment/ui";
+import { CircularProgressBar, Loader } from "@legacy-apartment/ui";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 
@@ -12,22 +12,17 @@ const DefaultLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <Head>
-        <title>Welcome | Legacy Apartment</title>
+        <title>Welcome | Legacy Apartment Admin</title>
       </Head>
       {isLoading ? (
         <Loader onComplete={() => setIsLoading(false)} />
       ) : (
         <div className="min-h-screen relative">
-          <Navbar />
 
           <main className="">
             {children}
             <CircularProgressBar />
           </main>
-
-          <footer>
-            <Footer />
-          </footer>
         </div>
       )}
     </div>

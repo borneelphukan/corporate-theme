@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import Banner from "@/components/banner";
-import Breadcrumb from "@/components/breadcrumb";
+import { Banner, Breadcrumb } from "@legacy-apartment/ui";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";

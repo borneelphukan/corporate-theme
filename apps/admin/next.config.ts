@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
   i18n,
+  transpilePackages: ["@legacy-apartment/ui"],
 };
 
 export default nextConfig;

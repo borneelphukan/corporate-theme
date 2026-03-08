@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const Loader = ({ onComplete }: { onComplete?: () => void }) => {
   const [progress, setProgress] = useState(0);
@@ -70,8 +70,8 @@ const Loader = ({ onComplete }: { onComplete?: () => void }) => {
             />
             <defs>
               <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#EA580C" /> {/* blue-500 */}
-                <stop offset="100%" stopColor="#EA580C" /> {/* indigo-500 */}
+                <stop offset="0%" stopColor="#EA580C" />
+                <stop offset="100%" stopColor="#EA580C" />
               </linearGradient>
             </defs>
           </svg>

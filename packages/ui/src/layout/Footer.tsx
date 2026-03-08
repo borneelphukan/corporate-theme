@@ -1,5 +1,5 @@
 import React from "react";
-import contactData from "@/data/contact-data.json";
+import contactData from "../data/contact-data.json";
 import Link from "next/link";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import EmailIcon from "@mui/icons-material/Email";

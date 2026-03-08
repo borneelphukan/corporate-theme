@@ -1,5 +1,5 @@
 {
-  "name": "admin",
+  "name": "@legacy-apartment/admin",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -51,7 +51,8 @@
     "react-switch": "^7.1.0",
     "remark-gfm": "^4.0.1",
     "sweetalert2": "^11.17.2",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "@legacy-apartment/ui": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

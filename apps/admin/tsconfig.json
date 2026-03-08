@@ -16,7 +16,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/types/*": ["./types/*"],
-      "@/icons/*": ["./public/icon/*"]
+      "@/icons/*": ["./public/icon/*"],
+      "@legacy-apartment/ui": ["../../packages/ui/src"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

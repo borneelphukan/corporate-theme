@@ -4,7 +4,7 @@ import Link from "next/link";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import Button from "@/components/button";
+import { Button } from "@legacy-apartment/ui";
 import residentsData from "@/data/residents.json";
 
 const bannerImages = [

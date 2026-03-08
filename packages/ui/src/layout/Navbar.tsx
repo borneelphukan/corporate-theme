@@ -7,7 +7,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
-
 const Navbar = () => {
   const [selectedLink, setSelectedLink] = useState<string | null>(null);
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
@@ -40,7 +39,7 @@ const Navbar = () => {
   }, [pathname]);
 
   const toggleMobileMenu = () => {
-    setShowMobileMenu((prev) => !prev);
+    setShowMobileMenu((prev: boolean) => !prev);
   };
 
   const toggleSubNavSociety = () => {
@@ -92,7 +91,7 @@ const Navbar = () => {
             className={`text-white hover:text-gray-300 hover:after:content-[''] hover:after:block hover:after:h-[2px] hover:after:bg-orange-500 hover:after:w-full hover:after:mt-[10px] ${
               selectedLink === "Our Society" ? "after:content-[''] after:block after:w-full after:h-[2px] after:bg-orange-500 after:mt-[10px]" : ""
             }`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               handleLinkClick("Our Society");
             }}
@@ -134,7 +133,7 @@ const Navbar = () => {
             className={`text-white hover:text-gray-300 hover:after:content-[''] hover:after:block hover:after:h-[2px] hover:after:bg-orange-500 hover:after:w-full hover:after:mt-[10px] ${
               selectedLink === "Services" ? "after:content-[''] after:block after:w-full after:h-[2px] after:bg-orange-500 after:mt-[10px]" : ""
             }`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               handleLinkClick("Services");
             }}
@@ -176,7 +175,7 @@ const Navbar = () => {
             className={`text-white hover:text-gray-300 hover:after:content-[''] hover:after:block hover:after:h-[2px] hover:after:bg-orange-500 hover:after:w-full hover:after:mt-[10px] ${
               selectedLink === "Events" ? "after:content-[''] after:block after:w-full after:h-[2px] after:bg-orange-500 after:mt-[10px]" : ""
             }`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               handleLinkClick("Events");
             }}
@@ -241,7 +240,7 @@ const Navbar = () => {
             className={`w-full flex justify-between items-center py-4 px-6 text-gray-800 hover:text-orange-500 hover:bg-gray-50 focus:outline-none transition-colors ${
               selectedLink === "Our Society" ? "text-orange-500" : ""
             }`}
-             onClick={(e) => {
+             onClick={(e: React.MouseEvent) => {
                e.preventDefault();
                handleLinkClick("Our Society");
                toggleSubNavSociety();
@@ -278,7 +277,7 @@ const Navbar = () => {
             className={`w-full flex justify-between items-center py-4 px-6 text-gray-800 hover:text-orange-500 hover:bg-gray-50 focus:outline-none transition-colors ${
               selectedLink === "Services" ? "text-orange-500" : ""
             }`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               handleLinkClick("Services");
               toggleSubNavServices();
@@ -315,7 +314,7 @@ const Navbar = () => {
             className={`w-full flex justify-between items-center py-4 px-6 text-gray-800 hover:text-orange-500 hover:bg-gray-50 focus:outline-none transition-colors ${
               selectedLink === "Events" ? "text-orange-500" : ""
             }`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               handleLinkClick("Events");
               toggleSubNavEvents();

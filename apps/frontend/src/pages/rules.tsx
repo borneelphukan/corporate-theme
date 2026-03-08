@@ -2,9 +2,7 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import Banner from "@/components/banner";
-import Breadcrumb from "@/components/breadcrumb";
-import Button from "@/components/button";
+import { Banner, Breadcrumb, Button } from "@legacy-apartment/ui";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import DomainOutlinedIcon from "@mui/icons-material/DomainOutlined";

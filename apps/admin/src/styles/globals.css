@@ -1,10 +1,14 @@
 @import "tailwindcss";
+@source "../../../../packages/ui/src";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
 }
 
 @theme {
@@ -68,4 +72,98 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.circular-progress {
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.circular-progress-background {
+  fill: transparent;
+  stroke: #000;
+}
+
+.circular-progress-circle {
+  fill: transparent;
+  stroke: #f97316; /* Orange color for progress bar */
+  transition: stroke-dashoffset 0.3s;
+}
+
+.arrow-up {
+  width: 0.75rem;
+  height: 0.75rem;
+  transform: translateY(-1px);
+}
+
+.circular-progress-container {
+  position: fixed;
+  bottom: -80px; /* Initial position off the screen */
+  right: 20px;
+  transition: bottom 0.3s;
+  z-index: 999;
+}
+
+.circular-progress-container.visible {
+  bottom: 60px; /* Move up to the desired position when visible */
+}
+
+.home-container {
+  background-image: url("/images/banners/banner-background.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 100vh; /* Adjust as needed */
+}
+
+.about-cover {
+  background-image: url("/images/banners/about-banner.jpeg");
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+  /* Adjust as needed */
+}
+
+.service-cover {
+  background-image: url("/images/banners/service-banner.jpeg");
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+  /* Adjust as needed */
+}
+
+.contact-cover {
+  background-image: url("/images/banners/contact-banner.jpeg");
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+  /* Adjust as needed */
+}
+
+.team-cover {
+  background-image: url("/images/banners/ourteam-banner.jpg");
+  background-size: cover;
+  background-position: center;
+  height: 45vh;
+  /* Adjust as needed */
+}
+
+.gallery-cover {
+  background-image: url("/images/banners/contact-banner.jpeg"); /* Placeholder, recommend updating with a gallery banner */
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+}
+
+.rules-cover {
+  background-image: url("/images/banners/about-banner.jpeg"); /* Placeholder */
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
+}
+
+.committee-cover {
+  background-image: url("/images/banners/ourteam-banner.jpg"); 
+  background-size: cover;
+  background-position: center;
+  height: 55vh;
 }
