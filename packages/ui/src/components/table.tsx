@@ -11,7 +11,7 @@ export interface Resident {
 export interface Props {
   residents: Resident[];
   columns: string[];
-  getStatus: (residentIndex: number, columnIndex: number) => number;
+  getStatus: (resident: any, columnIndex: number) => number;
   theme: "blue" | "orange";
   minWidthClass?: string;
   className?: string;
@@ -109,7 +109,7 @@ const Table = ({
                       {resident.phone_no || resident.phone}
                     </td>
                     {columns.map((col, colIdx) => {
-                      const status = getStatus(idx, colIdx);
+                      const status = getStatus(resident, colIdx);
                       let bgClass = "bg-gray-300"; // Future/Blank
                       if (status === 1) bgClass = "bg-green-500";
                       else if (status === -1) bgClass = "bg-red-500";

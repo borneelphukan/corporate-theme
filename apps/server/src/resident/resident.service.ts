@@ -13,6 +13,10 @@ export class ResidentService {
 
   async findAll() {
     return this.prisma.resident.findMany({
+      include: {
+        monthlyPayments: true,
+        securityPayments: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
   }

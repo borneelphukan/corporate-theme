@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 interface Resident {
   id: number;
@@ -218,9 +219,13 @@ const Residents = () => {
             </p>
         ) : (
             residents.map((res) => (
-                <div key={res.id} className="bg-white p-6 rounded-md border border-gray-500 shadow-md flex justify-between items-center gap-4 hover:shadow-lg transition-shadow">
+                <div 
+                    key={res.id} 
+                    onClick={() => router.push(`/finance/${res.id}`)}
+                    className="bg-white p-6 rounded-md border border-gray-500 shadow-md flex justify-between items-center gap-4 hover:shadow-lg transition-all cursor-pointer hover:border-orange-500 group/card"
+                >
                     <div className="flex items-center gap-4 text-gray-900 overflow-hidden">
-                        <div className="size-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0">
+                        <div className="size-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0 group-hover/card:border-orange-200">
                             {res.avatar ? (
                                 <img src={res.avatar} alt={res.name} className="w-full h-full object-cover" />
                             ) : (
@@ -228,11 +233,18 @@ const Residents = () => {
                             )}
                         </div>
                         <div className="truncate">
-                            <h3 className="font-bold text-lg truncate">{res.name}</h3>
+                            <h3 className="font-bold text-lg truncate group-hover/card:text-orange-600 transition-colors">{res.name}</h3>
                             <p className="text-orange-500 text-sm font-bold">{res.residence} <span className='text-gray-100 text-xs font-medium'> | {res.phone_no}</span></p>
                         </div>
                     </div>
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <Button 
+                            variant="outline"
+                            size="icon"
+                            onClick={() => router.push(`/finance/${res.id}`)}
+                            icon={{ left: <PaymentsIcon className="size-5" /> }}
+                            title="Finance"
+                        />
                         <Button 
                             variant="outline"
                             size="icon"

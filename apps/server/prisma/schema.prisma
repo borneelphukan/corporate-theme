@@ -33,11 +33,45 @@ model Announcement {
 }
 
 model Resident {
-  id        Int      @id @default(autoincrement())
-  avatar    String?
-  name      String
-  residence String
-  phone_no  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int               @id @default(autoincrement())
+  avatar          String?
+  name            String
+  residence       String
+  phone_no        String
+  monthlyPayments MonthlyPayment[]
+  securityPayments SecurityPayment[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model MonthlyPayment {
+  id         Int      @id @default(autoincrement())
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  residentId Int
+  month      Int      // 0-11
+  year       Int
+  status     Int      @default(0) // 1: paid, -1: unpaid, 0: pending
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([residentId, month, year])
+}
+
+model SecurityPayment {
+  id         Int      @id @default(autoincrement())
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
+  residentId Int
+  year       Int
+  status     Int      @default(0) // 1: paid, -1: unpaid, 0: pending
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([residentId, year])
+}
+
+model Setting {
+  id         Int      @id @default(1)
+  monthlyFee Float    @default(0)
+  annualFee  Float    @default(0)
+  updatedAt  DateTime @updatedAt
 }

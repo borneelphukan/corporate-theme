@@ -12,8 +12,13 @@ const years = ["2023", "2024", "2025"];
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const securityYearsAll = ["2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
 
-const getStatus = (residentIndex: number, monthIndex: number, year: string) => {
+const getStatus = (resident: any, monthIndex: number, year: string) => {
   const y = parseInt(year);
+  const payment = resident.monthlyPayments?.find(
+    (p: any) => p.month === monthIndex && p.year === y
+  );
+  if (payment) return payment.status;
+
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth();
@@ -22,12 +27,16 @@ const getStatus = (residentIndex: number, monthIndex: number, year: string) => {
     return 0; // future
   }
   
-  const seed = residentIndex * 31 + monthIndex * 17 + y * 13;
-  return (seed % 10 > 1) ? 1 : -1; 
+  return 0; // default to pending
 };
 
-const getSecurityStatus = (residentIndex: number, year: string) => {
+const getSecurityStatus = (resident: any, year: string) => {
   const y = parseInt(year);
+  const payment = resident.securityPayments?.find(
+    (p: any) => p.year === y
+  );
+  if (payment) return payment.status;
+
   const now = new Date();
   const currentYear = now.getFullYear();
   
@@ -35,8 +44,7 @@ const getSecurityStatus = (residentIndex: number, year: string) => {
     return 0; // future
   }
   
-  const seed = residentIndex * 41 + y * 19;
-  return (seed % 10 > 1) ? 1 : -1; 
+  return 0;
 };
 
 
@@ -136,7 +144,7 @@ const MaintenancePay = () => {
             <Table
               residents={residents}
               columns={months}
-              getStatus={(residentIndex, colIndex) => getStatus(residentIndex, colIndex, selectedYear)}
+              getStatus={(resident, colIndex) => getStatus(resident, colIndex, selectedYear)}
               theme="blue"
               minWidthClass="min-w-[1000px]"
               className="mb-16"
@@ -192,7 +200,7 @@ const MaintenancePay = () => {
             <Table
               residents={residents}
               columns={visibleSecurityYears}
-              getStatus={(residentIndex, colIndex) => getSecurityStatus(residentIndex, visibleSecurityYears[colIndex])}
+              getStatus={(resident, colIndex) => getSecurityStatus(resident, visibleSecurityYears[colIndex])}
               theme="orange"
               minWidthClass="min-w-[800px]"
               className="mb-20"
