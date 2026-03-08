@@ -50,10 +50,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const variantClasses: Record<ButtonVariant, string> = {
     primary: "text-white bg-orange-500 hover:bg-orange-600",
-    success: "text-white bg-green-500 hover:bg-green-600 shadow-lg shadow-green-500/30",
-    destructive: "text-white bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/30",
-    outline: "text-gray-100 border border-gray-400 hover:bg-gray-400/10 shadow-sm",
-    secondary: "text-white bg-gray-500 hover:bg-gray-400 shadow-md",
+    success: "text-white bg-green-500 hover:bg-green-600",
+    destructive: "text-white bg-red-200 hover:bg-red-600",
+    outline: "text-gray-100 border border-gray-400",
+    secondary: "text-white bg-gray-500 hover:bg-gray-400",
     ghost: "text-gray-100 hover:bg-gray-400/10",
     link: "text-orange-500 p-0 rounded-none hover:underline",
   };

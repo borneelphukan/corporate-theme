@@ -106,7 +106,7 @@ const Residents = () => {
       showCancelButton: true,
       confirmButtonColor: '#f97316',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: 'Yes'
     });
 
     if (result.isConfirmed) {
@@ -198,10 +198,9 @@ const Residents = () => {
                 {editingId ? 'Update' : 'Save'}
               </Button>
               <Button 
-                variant="secondary"
+                variant="outline"
                 type="button" 
                 onClick={() => setIsFormOpen(false)}
-                className="!bg-gray-500 !text-white hover:!bg-gray-400 rounded-xl px-8 py-3 border-none shadow-none"
               >
                 Cancel
               </Button>
@@ -230,23 +229,20 @@ const Residents = () => {
                         </div>
                         <div className="truncate">
                             <h3 className="font-bold text-lg truncate">{res.name}</h3>
-                            <p className="text-orange-500 text-sm font-bold">{res.residence}</p>
-                            <p className="text-gray-500 text-xs font-medium">{res.phone_no}</p>
+                            <p className="text-orange-500 text-sm font-bold">{res.residence} <span className='text-gray-100 text-xs font-medium'> | {res.phone_no}</span></p>
                         </div>
                     </div>
                     <div className="flex gap-2 shrink-0">
                         <Button 
-                            variant="secondary"
+                            variant="outline"
                             size="icon"
                             onClick={() => handleEdit(res)}
-                            className="!bg-blue-50 !text-blue-600 hover:!bg-blue-100 !rounded-xl !border-0 !shadow-none !size-10"
                             icon={{ left: <EditIcon className="size-5" /> }}
                         />
                         <Button 
                             variant="destructive"
                             size="icon"
                             onClick={() => handleDelete(res.id)}
-                            className="!bg-red-50 !text-red-600 hover:!bg-red-100 !rounded-xl !border-0 !shadow-none !size-10"
                             icon={{ left: <DeleteIcon className="size-5" /> }}
                         />
                     </div>

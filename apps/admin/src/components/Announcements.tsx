@@ -102,7 +102,7 @@ const Announcements = () => {
       showCancelButton: true,
       confirmButtonColor: '#f97316',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: 'Yes'
     });
 
     if (result.isConfirmed) {
