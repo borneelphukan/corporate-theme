@@ -7,6 +7,7 @@ import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import { ChevronRightOutlined } from "@mui/icons-material";
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: currentYear - 2023 + 1 }, (_, i) => String(2023 + i));
@@ -54,14 +55,6 @@ const getSecurityStatus = (resident: any, year: string) => {
   
   return 0;
 };
-
-
-const securityFees = [
-  { item: "24/7 Gate Security Guard", amount: "₹ 3,500" },
-  { item: "CCTV Network & Surveillance AMC", amount: "₹ 1,000" },
-  { item: "Biometric Access System Maint.", amount: "₹ 500" },
-];
-const totalSecurityFee = "₹ 5,000";
 
 const MaintenancePay = () => {
   const [selectedYear, setSelectedYear] = useState<string>(String(currentYear));
@@ -179,7 +172,6 @@ const MaintenancePay = () => {
               monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
               theme="blue"
               minWidthClass="min-w-[1000px]"
-              className="mb-16"
               enableLock
               storageKey="contributions_monthly_lock"
             />
@@ -251,7 +243,7 @@ const MaintenancePay = () => {
             />
 
             {/* Payment Call To Action Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl p-8 md:p-12 text-center text-white shadow-2xl flex flex-col items-center justify-center border border-blue-400/30">
+            <div className="relative overflow-hidden bg-gradient-to-br from-blue-200 to-blue-100 rounded-xl p-8 md:p-12 text-center text-white shadow-2xl flex flex-col items-center justify-center border border-blue-400/30">
               
               {/* Background abstract circles for CTA block */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
@@ -266,15 +258,15 @@ const MaintenancePay = () => {
                   Haven&apos;t paid your fees yet?
                 </h3>
                 
-                <p className="text-blue-100 md:text-lg mb-8 max-w-lg font-light">
+                <p className="text-light md:text-lg mb-8 max-w-lg font-light">
                   Ensure seamless services and avoid late penalties. Click below to proceed to our secure payment gateway and clear your dues instantly.
                 </p>
 
                 <Button 
-                  variant="secondary"
-                  icon={{ right: <ArrowForwardIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" /> }}
+                  variant="primary"
+                  icon={{ right: <ChevronRightOutlined className="w-5 h-5 group-hover:translate-x-1 transition-transform" /> }}
                 >
-                  Pay Now
+                  Pay Fees
                 </Button>
               </div>
             </div>

@@ -13,7 +13,7 @@ const Footer = () => {
           {/* Column 1: Branding */}
           <div className="mb-8 md:text-left text-center">
             <h2 className="text-3xl font-semibold mb-4">
-              <span className="text-orange-500">B</span>DESIGN
+              <span className="text-orange-200">THE </span>LEGACY
             </h2>
             <div className="text-sm text-slate-400 flex flex-col space-y-3 items-center md:items-start mt-4">
               <div className="flex items-center space-x-3">

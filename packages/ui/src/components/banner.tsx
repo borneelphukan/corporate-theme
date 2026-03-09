@@ -31,18 +31,16 @@ const Banner: React.FC<BannerProps> = ({ title, subtitle, bgClass = "", theme = 
     );
   }
 
-  const isDark = theme === "dark";
-
   return (
     <div className={`${bgClass} w-full`}>
       <div className="container mx-auto px-10">
-        <div className={`pt-28 pb-10 md:pt-36 md:pb-12 lg:pt-40 lg:pb-16 xl:pt-48 xl:pb-20 ${isDark ? "text-white" : "text-black"}`}>
+        <div className="pt-28 pb-10 md:pt-36 md:pb-12 lg:pt-40 lg:pb-16 xl:pt-48 xl:pb-20 text-black">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className={`my-5 md:my-10 md:text-3xl lg:text-3xl xl:text-3xl font-semibold text-2xl mb-4 ${isDark ? "text-gray-200" : "text-gray-400"}`}>
+            <h1 className="my-5 md:my-10 md:text-3xl lg:text-3xl xl:text-3xl font-semibold text-2xl mb-4 text-gray-400">
               {title}
             </h1>
 
-            <p className={`max-w-md text-3xl md:text-lg lg:text-5xl w-[50%] text-center mx-auto ${isDark ? "text-gray-100" : "text-gray-300"}`}>
+            <p className="max-w-md text-3xl md:text-lg lg:text-5xl w-[50%] text-center mx-auto text-gray-300">
               {subtitle}
             </p>
           </div>
