@@ -14,6 +14,7 @@ const API_BASE_URL = 'http://localhost:4000';
 const AdminDashboard = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints'>('dashboard');
+  const [userRole, setUserRole] = useState('');
   const [stats, setStats] = useState({
     residents: 0,
     announcements: 0,
@@ -25,6 +26,16 @@ const AdminDashboard = () => {
     if (router.query.tab) 
       setActiveTab(router.query.tab as any);
   }, [router.query.tab]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('adminUser');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        if (user?.role) setUserRole(user.role.charAt(0).toUpperCase() + user.role.slice(1));
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -77,7 +88,7 @@ const AdminDashboard = () => {
                   Admin Dashboard
                 </h1>
                 <p className="mt-2 text-lg">
-                  Welcome back! Here's an overview of the society management.
+                  Welcome back{userRole ? `, ${userRole}` : ''}! Here's an overview of the society management.
                 </p>
               </div>
 

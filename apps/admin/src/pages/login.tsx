@@ -54,6 +54,7 @@ export default function Login() {
         
         if (!isRegisterMode) {
           localStorage.setItem('adminToken', data.token);
+          localStorage.setItem('adminUser', JSON.stringify(data.user));
           router.push('/');
         } else {
           setIsRegisterMode(false);

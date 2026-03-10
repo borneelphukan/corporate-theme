@@ -1,19 +1,20 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { SettingService } from './setting.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { Public } from '../auth/public.decorator';
 
 @Controller('setting')
 export class SettingController {
   constructor(private readonly settingService: SettingService) {}
 
+  @Public()
   @Get()
   getSettings() {
     return this.settingService.getSettings();
   }
 
   @Post()
-  @UseGuards(AuthGuard)
   updateSettings(@Body() data: { monthlyFee?: number; yearlyFee?: number }) {
     return this.settingService.updateSettings(data);
   }
 }
+

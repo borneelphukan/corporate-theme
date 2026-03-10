@@ -1,10 +1,12 @@
 import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Public } from '../auth/public.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() loginDto: Record<string, any>) {

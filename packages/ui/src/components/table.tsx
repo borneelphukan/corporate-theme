@@ -188,8 +188,8 @@ const Table = ({
                               if (!readOnly && !isEditing) {
                                 setEditingCell({ resIdx: idx, colIdx: colIdx });
                                 setTempValue(String(value));
+                                onCellClick?.(resident, colIdx);
                               }
-                              onCellClick?.(resident, colIdx);
                             }}
                           >
                             {isEditing ? (

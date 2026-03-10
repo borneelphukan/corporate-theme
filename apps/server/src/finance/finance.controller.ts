@@ -1,9 +1,7 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
 import { FinanceService } from './finance.service';
-import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('finance')
-@UseGuards(AuthGuard)
 export class FinanceController {
   constructor(private readonly financeService: FinanceService) {}
 
@@ -33,3 +31,4 @@ export class FinanceController {
     return this.financeService.updateSecurityPayment(id, data);
   }
 }
+

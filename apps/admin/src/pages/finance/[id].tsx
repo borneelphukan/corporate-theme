@@ -35,6 +35,17 @@ const FinancePage = () => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
+  const [isPresident, setIsPresident] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('adminUser');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        setIsPresident(user?.role === 'president');
+      } catch {}
+    }
+  }, []);
 
   // Generate years from 2023 to current year
   const availableYears = Array.from(
@@ -334,6 +345,7 @@ const FinancePage = () => {
                 columns={months}
                 type="numerical"
                 theme="orange"
+                readOnly={!isPresident}
                 getValue={(res, colIdx) => {
                   const payment = res.monthlyPayments.find(
                     (p: any) => p.month === colIdx && p.year === selectedYear
@@ -372,6 +384,7 @@ const FinancePage = () => {
                 columns={[`Fee ${selectedYear}`]}
                 type="numerical"
                 theme="blue"
+                readOnly={!isPresident}
                 getValue={() => {
                   const payment = resident.securityPayments.find(
                     (p: any) => p.year === selectedYear

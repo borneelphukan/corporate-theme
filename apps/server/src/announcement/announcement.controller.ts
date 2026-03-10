@@ -1,13 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { AnnouncementService } from './announcement.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { Public } from '../auth/public.decorator';
 
 @Controller('announcements')
 export class AnnouncementController {
   constructor(private readonly announcementService: AnnouncementService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   create(@Body() createAnnouncementDto: { title: string; description: string; date?: string }) {
     return this.announcementService.create({
         ...createAnnouncementDto,
@@ -15,18 +14,19 @@ export class AnnouncementController {
     });
   }
 
+  @Public()
   @Get()
   findAll() {
     return this.announcementService.findAll();
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.announcementService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
   update(@Param('id', ParseIntPipe) id: number, @Body() updateAnnouncementDto: { title?: string; description?: string; date?: string }) {
     return this.announcementService.update(id, {
         ...updateAnnouncementDto,
@@ -35,8 +35,8 @@ export class AnnouncementController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.announcementService.remove(id);
   }
 }
+

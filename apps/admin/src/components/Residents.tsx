@@ -34,7 +34,18 @@ const Residents = () => {
   });
   const [loading, setLoading] = useState(true);
   const [avatarFiles, setAvatarFiles] = useState<File[]>([]);
+  const [isPresident, setIsPresident] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('adminUser');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        setIsPresident(user?.role === 'president');
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     fetchResidents();
@@ -169,17 +180,19 @@ const Residents = () => {
             Add, edit or remove society residents data.
           </p>
         </div>
-        <Button 
-            variant="primary"
-            onClick={() => {
-                setEditingId(null);
-                setFormData({ name: '', residence: '', phone_no: '', avatar: '', designation: 'None' });
-                setAvatarFiles([]);
-                setIsFormOpen(true);
-            }}
-        >
-          Add Resident
-        </Button>
+        {isPresident && (
+          <Button 
+              variant="primary"
+              onClick={() => {
+                  setEditingId(null);
+                  setFormData({ name: '', residence: '', phone_no: '', avatar: '', designation: 'None' });
+                  setAvatarFiles([]);
+                  setIsFormOpen(true);
+              }}
+          >
+            Add Resident
+          </Button>
+        )}
       </div>
 
       {isFormOpen && (
@@ -328,12 +341,14 @@ const Residents = () => {
                             onClick={() => handleEdit(res)}
                             icon={{ left: <EditIcon className="size-5" /> }}
                         />
-                        <Button 
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => handleDelete(res.id)}
-                            icon={{ left: <DeleteIcon className="size-5" /> }}
-                        />
+                        {isPresident && (
+                          <Button 
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDelete(res.id)}
+                              icon={{ left: <DeleteIcon className="size-5" /> }}
+                          />
+                        )}
                     </div>
                 </div>
             ))
