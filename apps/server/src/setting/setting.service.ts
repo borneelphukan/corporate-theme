@@ -19,9 +19,18 @@ export class SettingService implements OnModuleInit {
   }
 
   async getSettings() {
-    return this.prisma.setting.findFirst({
+    const setting = await this.prisma.setting.findFirst({
       orderBy: { id: 'asc' },
     });
+
+    if (!setting) {
+      return {
+        monthlyFee: 1000,
+        yearlyFee: 5000,
+      };
+    }
+
+    return setting;
   }
 
   async updateSettings(data: { monthlyFee?: number; yearlyFee?: number }) {

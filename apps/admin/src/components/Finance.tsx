@@ -65,10 +65,12 @@ const Finance = () => {
             const response = await fetch(`${API_BASE_URL}/setting`);
             if (response.ok) {
                 const data = await response.json();
-                setFees({
-                    monthlyFee: data.monthlyFee,
-                    yearlyFee: data.yearlyFee,
-                });
+                if (data) {
+                    setFees({
+                        monthlyFee: data.monthlyFee || 1000,
+                        yearlyFee: data.yearlyFee || 5000,
+                    });
+                }
             }
         } catch (error) {
             console.error('Error fetching settings:', error);

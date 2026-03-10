@@ -74,7 +74,7 @@ const CircularScrollProgressBar = () => {
             strokeDashoffset={100 - progress}
           />
         </svg>
-        <div className="w-9 h-9 md:w-10 md:h-10 bg-white/90 backdrop-blur border border-gray-100 shadow-sm rounded-full flex items-center justify-center z-10 group-hover:bg-gray-100 transition-colors">
+        <div className="w-9 h-9 md:w-10 md:h-10 bg-white/90 backdrop-blur border border-gray-400 shadow-sm rounded-full flex items-center justify-center z-10 group-hover:bg-gray-100 transition-colors">
           <FaArrowUp className="text-gray-800 text-sm md:text-base group-hover:-translate-y-0.5 transition-transform" />
         </div>
       </div>

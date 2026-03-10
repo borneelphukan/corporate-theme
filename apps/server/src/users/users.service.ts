@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
@@ -38,8 +38,39 @@ export class UserService {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        // @ts-ignore
+        role: user.role,
       },
       message: 'Login successful'
+    };
+  }
+
+  async createUser(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+    password?: string;
+  }) {
+    const hashedPassword = await bcrypt.hash(data.password || 'password123', 10);
+    
+    const user = await this.prisma.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      message: 'User created successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        // @ts-ignore
+        role: user.role,
+      },
     };
   }
 }

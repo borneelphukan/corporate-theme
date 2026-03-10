@@ -22,6 +22,8 @@ async function main() {
       lastName: 'Phukan',
       email: 'phukandipak@gmail.com',
       password: hashedPassword,
+      // @ts-ignore - Prisma client needs to be re-synced in IDE
+      role: 'president',
     },
   });
 

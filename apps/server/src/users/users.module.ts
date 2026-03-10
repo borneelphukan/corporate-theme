@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -13,8 +13,8 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  providers: [UserService],
-  controllers: [UserController],
-  exports: [UserService],
+  providers: [UsersService],
+  controllers: [UsersController],
+  exports: [UsersService],
 })
-export class UserModule {}
+export class UsersModule {}

@@ -12,13 +12,13 @@ interface DropdownMenuContextType {
 
 const DropdownMenuContext = React.createContext<DropdownMenuContextType | null>(null);
 
-function DropdownMenu({ children }: { children: React.ReactNode }) {
+function DropdownMenu({ children, className }: { children: React.ReactNode; className?: string }) {
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   return (
     <DropdownMenuContext.Provider value={{ open, setOpen, anchorEl, setAnchorEl }}>
-      <div className="relative inline-block text-left">{children}</div>
+      <div className={`relative inline-block text-left ${className || ""}`}>{children}</div>
     </DropdownMenuContext.Provider>
   );
 }
