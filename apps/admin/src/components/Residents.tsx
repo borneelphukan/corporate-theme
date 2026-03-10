@@ -17,7 +17,20 @@ interface Resident {
   designation?: string | null;
 }
 
-const designations = ['None', 'Secretary', 'President', 'Treasurer'];
+const designations = [
+  'None', 
+  'Secretary', 
+  'President', 
+  'Treasurer', 
+  'Joint Secretary', 
+  'Advisors', 
+  'Technical Advisors', 
+  'Cultural Head', 
+  'Welfare Head', 
+  'Gym Head', 
+  'Gardening', 
+  'Catering'
+];
 
 const API_BASE_URL = 'http://localhost:4000';
 

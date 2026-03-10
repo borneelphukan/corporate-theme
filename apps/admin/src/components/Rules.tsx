@@ -40,7 +40,18 @@ const Rules = () => {
     rule: '',
   });
   const [loading, setLoading] = useState(true);
+  const [isPresident, setIsPresident] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('adminUser');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        setIsPresident(user?.role === 'president');
+      } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     fetchRules();
@@ -151,16 +162,18 @@ const Rules = () => {
             Add, edit or remove society guidelines and regulations.
           </p>
         </div>
-        <Button 
-            variant="primary"
-            onClick={() => {
-                setEditingId(null);
-                setFormData({ category: categories[0], rule: '' });
-                setIsFormOpen(true);
-            }}
-        >
-          Add Rule
-        </Button>
+        {isPresident && (
+          <Button 
+              variant="primary"
+              onClick={() => {
+                  setEditingId(null);
+                  setFormData({ category: categories[0], rule: '' });
+                  setIsFormOpen(true);
+              }}
+          >
+            Add Rule
+          </Button>
+        )}
       </div>
 
       {isFormOpen && (
@@ -249,20 +262,22 @@ const Rules = () => {
                             ))}
                           </ul>
                         </div>
-                        <div className="flex gap-3 shrink-0">
-                          <Button 
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleEdit(rule)}
-                            icon={{ left: <EditIcon className="size-5" /> }}
-                          />
-                          <Button 
-                            variant="destructive"
-                            size="icon"
-                            onClick={() => handleDelete(rule.id)}
-                            icon={{ left: <DeleteIcon className="size-5" /> }}
-                          />
-                        </div>
+                        {isPresident && (
+                          <div className="flex gap-3 shrink-0">
+                            <Button 
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleEdit(rule)}
+                              icon={{ left: <EditIcon className="size-5" /> }}
+                            />
+                            <Button 
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDelete(rule.id)}
+                              icon={{ left: <DeleteIcon className="size-5" /> }}
+                            />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
