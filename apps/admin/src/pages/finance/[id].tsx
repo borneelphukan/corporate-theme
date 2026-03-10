@@ -58,11 +58,11 @@ const FinancePage = () => {
       fetchResidentFinance();
       fetchSettings();
     }
-  }, [id]);
+  }, [id, selectedYear]);
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/setting`);
+      const response = await fetch(`${API_BASE_URL}/setting?year=${selectedYear}`);
       if (response.ok) {
         const data = await response.json();
         setFees({
@@ -255,7 +255,7 @@ const FinancePage = () => {
       </Head>
 
       <div className="flex min-h-screen bg-gray-50">
-        <Sidebar activeTab="residents" />
+        <Sidebar activeTab="finance" />
 
         <div className="flex-1 min-w-0 md:ml-64 p-4 md:p-8 lg:p-12">
           <div className="max-w-6xl mx-auto">
@@ -345,31 +345,12 @@ const FinancePage = () => {
                 columns={months}
                 type="numerical"
                 theme="orange"
-                readOnly={!isPresident}
+                readOnly={true}
                 getValue={(res, colIdx) => {
                   const payment = res.monthlyPayments.find(
                     (p: any) => p.month === colIdx && p.year === selectedYear
                   );
                   return payment ? payment.amount.toLocaleString() : "0";
-                }}
-                onCellClick={(res, colIdx) => {
-                  const payment = res.monthlyPayments.find(
-                    (p: any) => p.month === colIdx && p.year === selectedYear
-                  );
-                  const currentStatus = payment ? payment.status : 0;
-                  const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
-                  // Auto-set amount if marking as paid
-                  const amount = nextStatus === 1 ? fees.monthlyFee : (payment?.amount || 0);
-                  updateMonthlyStatus(colIdx, nextStatus, amount);
-                }}
-                onValueChange={(res, colIdx, newValue) => {
-                  const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
-                  const status = amount >= fees.monthlyFee ? 1 : amount > 0 ? 0 : -1;
-                  updateMonthlyStatus(colIdx, status, amount);
-                }}
-                onMonthlyFeeChange={(val) => {
-                  const num = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
-                  updateGlobalFees({ monthlyFee: num });
                 }}
                 monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
                 showYearlyFeeLegend={false}
@@ -384,30 +365,12 @@ const FinancePage = () => {
                 columns={[`Fee ${selectedYear}`]}
                 type="numerical"
                 theme="blue"
-                readOnly={!isPresident}
+                readOnly={true}
                 getValue={() => {
                   const payment = resident.securityPayments.find(
                     (p: any) => p.year === selectedYear
                   );
                   return payment ? payment.amount.toLocaleString() : "0";
-                }}
-                onCellClick={() => {
-                  const payment = resident.securityPayments.find(
-                    (p: any) => p.year === selectedYear
-                  );
-                  const currentStatus = payment ? payment.status : 0;
-                  const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
-                  const amount = nextStatus === 1 ? fees.yearlyFee : (payment?.amount || 0);
-                  updateSecurityStatus(nextStatus, amount);
-                }}
-                onValueChange={(res, colIdx, newValue) => {
-                  const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
-                  const status = amount >= fees.yearlyFee ? 1 : amount > 0 ? 0 : -1;
-                  updateSecurityStatus(status, amount);
-                }}
-                onYearlyFeeChange={(val) => {
-                  const num = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
-                  updateGlobalFees({ yearlyFee: num });
                 }}
                 yearlyFee={`₹ ${fees.yearlyFee.toLocaleString()}`}
                 showMonthlyFeeLegend={false}

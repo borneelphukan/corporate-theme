@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { 
   Button, 
   Table,
@@ -15,8 +16,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 const API_BASE_URL = 'http://localhost:4000';
 
 const months = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+  'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'
 ];
 
 interface MonthlyPayment {
@@ -44,11 +45,25 @@ interface ResidentFinance {
 }
 
 const Finance = () => {
+    const router = useRouter();
     const [financeData, setFinanceData] = useState<ResidentFinance[]>([]);
     const [loading, setLoading] = useState(true);
     const currentYear = new Date().getFullYear();
+    const currentMonthIdx = new Date().getMonth();
     const [selectedYear, setSelectedYear] = useState(currentYear);
+    const [selectedMonth, setSelectedMonth] = useState(currentMonthIdx);
     const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
+    const [canEditFinance, setCanEditFinance] = useState(false);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('adminUser');
+        if (stored) {
+            try {
+                const user = JSON.parse(stored);
+                setCanEditFinance(user?.role === 'president' || user?.role === 'treasurer');
+            } catch {}
+        }
+    }, []);
 
     const availableYears = Array.from(
         { length: currentYear - 2023 + 1 }, 
@@ -58,11 +73,11 @@ const Finance = () => {
     useEffect(() => {
         fetchFinanceData();
         fetchSettings();
-    }, []);
+    }, [selectedYear]);
 
     const fetchSettings = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/setting`);
+            const response = await fetch(`${API_BASE_URL}/setting?year=${selectedYear}`);
             if (response.ok) {
                 const data = await response.json();
                 if (data) {
@@ -126,92 +141,270 @@ const Finance = () => {
         XLSX.writeFile(workbook, `Society_Fees.xlsx`);
     };
 
+    const updateMonthlyStatus = async (residentId: number, monthIndex: number, status: number, amount?: number) => {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`${API_BASE_URL}/finance/monthly/${residentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    month: monthIndex,
+                    year: selectedYear,
+                    status,
+                    amount
+                }),
+            });
+
+            if (response.ok) {
+                fetchFinanceData();
+            }
+        } catch (error) {
+            console.error('Error updating monthly status:', error);
+        }
+    };
+
+    const updateSecurityStatus = async (residentId: number, status: number, amount?: number) => {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`${API_BASE_URL}/finance/security/${residentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    year: selectedYear,
+                    status,
+                    amount
+                }),
+            });
+
+            if (response.ok) {
+                fetchFinanceData();
+            }
+        } catch (error) {
+            console.error('Error updating security status:', error);
+        }
+    };
+
+    const updateGlobalFees = async (data: { monthlyFee?: number; yearlyFee?: number }) => {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`${API_BASE_URL}/setting`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    ...data,
+                    year: selectedYear
+                }),
+            });
+
+            if (response.ok) {
+                fetchSettings();
+            }
+        } catch (error) {
+            console.error('Error updating global fees:', error);
+        }
+    };
+
+    const currentMonthName = months[selectedMonth];
+
+    const stats = financeData.reduce((acc, resident) => {
+        const monthPayment = (resident.monthlyPayments || []).find(
+            p => p.month === selectedMonth && p.year === selectedYear
+        );
+        const monthAmount = monthPayment ? Number(monthPayment.amount) : 0;
+        
+        let residentPending = 0;
+        let isDefaulter = false;
+        const endMonth = selectedYear < currentYear ? 11 : (selectedYear === currentYear ? currentMonthIdx : -1);
+
+        if (endMonth >= 0) {
+            for (let m = 0; m <= endMonth; m++) {
+                const p = (resident.monthlyPayments || []).find(pay => pay.month === m && pay.year === selectedYear);
+                const amt = p ? Number(p.amount) : 0;
+                if (amt < fees.monthlyFee) {
+                    residentPending += (fees.monthlyFee - amt);
+                    isDefaulter = true;
+                }
+            }
+        }
+
+        return {
+            currentCollected: acc.currentCollected + monthAmount,
+            totalPending: acc.totalPending + residentPending,
+            defaulterCount: acc.defaulterCount + (isDefaulter ? 1 : 0)
+        };
+    }, { currentCollected: 0, totalPending: 0, defaulterCount: 0 });
+
+    const totalExpectedCurrentMonth = financeData.length * fees.monthlyFee;
+    const isReadOnly = !canEditFinance || selectedYear !== currentYear;
+
     return (
-        <div className="w-full">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-6">
-                <div>
-                    <h1 className="text-xl md:text-2xl">
-                        Cumulative Society Fees
+        <div className="w-full pb-20">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
+                <div className="flex-1">
+                    <h1 className="text-3xl md:text-5xl text-gray-100 font-black tracking-tight leading-tight">
+                        Finance Management
                     </h1>
-                    <p className="mt-2 font-light">
-                        View and export combined finance data of all residents for {selectedYear}.
+                    <p className="mt-3 text-lg font-light text-gray-100/80">
+                        Detailed overview of all resident contributions for the year {selectedYear}.
                     </p>
                 </div>
-                <div className="flex flex-col gap-2 items-end">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button 
-                                variant="outline" 
-                                className="flex items-center gap-2 font-bold text-gray-900 border-gray-400 w-fit"
-                                icon={{ right: <KeyboardArrowDownIcon className="size-4" /> }}
-                            >
-                                {selectedYear}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-white border-gray-400">
-                            <DropdownMenuRadioGroup>
-                                {availableYears.map((y) => (
-                                    <DropdownMenuRadioItem 
-                                        key={y} 
-                                        checked={selectedYear === y} 
-                                        onClick={() => setSelectedYear(y)}
-                                        className="text-gray-900"
-                                    >
-                                        {y}
-                                    </DropdownMenuRadioItem>
-                                ))}
-                            </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                <div className="flex items-center gap-3">
+                    <div className="flex flex-col gap-1.5 items-end">
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <button 
+                                  className="flex items-center gap-2 font-bold text-gray-900 border border-gray-400 bg-white px-5 py-2.5 rounded-xl hover:border-orange-500 transition-all shadow-sm text-sm"
+                              >
+                                  {selectedYear}
+                                  <KeyboardArrowDownIcon className="size-4 text-gray-400" />
+                              </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-white border-gray-400 w-40">
+                              <DropdownMenuRadioGroup>
+                                  {availableYears.map((y) => (
+                                      <DropdownMenuRadioItem 
+                                          key={y} 
+                                          checked={selectedYear === y} 
+                                          onClick={() => setSelectedYear(y)}
+                                          className="text-gray-900"
+                                      >
+                                          {y}
+                                      </DropdownMenuRadioItem>
+                                  ))}
+                              </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                     <Button 
-                        variant="outline"
+                        variant="primary"
                         onClick={downloadXLSX}
                         icon={{ left: <DownloadIcon className="size-5" /> }}
                     >
-                        Download .xlsx
+                        Download Data
                     </Button>
                 </div>
             </div>
 
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div className="bg-white p-8 rounded-xl border border-gray-400 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+                    <p className="text-[10px] font-bold text-gray-100 uppercase tracking-[0.2em] mb-3 relative z-10">Collection On Selected Month ({currentMonthName})</p>
+                    <div className="flex items-baseline gap-2 relative z-10">
+                        <span className="text-4xl font-black text-orange-500">₹ {stats.currentCollected.toLocaleString()}</span>
+                        <span className="text-gray-100/50 font-bold text-sm">/ ₹ {totalExpectedCurrentMonth.toLocaleString()}</span>
+                    </div>
+                </div>
+                <div className="bg-white p-8 rounded-xl border border-gray-400 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+                    <p className="text-[10px] font-bold text-gray-100 uppercase tracking-[0.2em] mb-3 relative z-10">Pending Collection (Cumulative)</p>
+                    <p className="text-4xl font-black text-blue-500 relative z-10">₹ {stats.totalPending.toLocaleString()}</p>
+                </div>
+                <div className="bg-white p-8 rounded-xl border border-gray-400 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+                    <p className="text-[10px] font-bold text-gray-100 uppercase tracking-[0.2em] mb-3 relative z-10">Total Defaulters ({selectedYear})</p>
+                    <p className="text-4xl font-black text-red-500 relative z-10">{stats.defaulterCount}</p>
+                </div>
+            </div>
+
             {loading ? (
-                <div className="text-center py-20 text-gray-100">Loading finance data...</div>
+                <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 shadow-sm font-medium">
+                  Gathering financial records...
+                </div>
             ) : financeData.length === 0 ? (
-                <p className="text-center">No resident data found.</p>
+                <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 shadow-sm">
+                  No financial data available for this period.
+                </div>
             ) : (
-                <div className="space-y-10">
+                <div className="space-y-20">
                     <div>
-                        <h3 className="text-sm font-bold text-gray-100 mb-6 uppercase tracking-wider">Monthly Society Fees</h3>
+                        <div className="flex items-center gap-4 mb-8">
+                          <h3 className="text-sm font-black text-gray-100 uppercase tracking-[0.2em]">Monthly Society Fees</h3>
+                          <div className="h-px bg-gray-400 flex-1"></div>
+                        </div>
                         <Table 
                             theme="orange"
                             type="numerical"
                             residents={financeData}
                             columns={months}
-                            readOnly={true}
+                            readOnly={isReadOnly}
+                            onHeaderClick={(idx) => setSelectedMonth(idx)}
+                            selectedColumnIndex={selectedMonth}
+                            onRowClick={(row) => router.push(`/finance/${row.id}`)}
                             getValue={(resident: ResidentFinance, colIdx) => {
-                                const payment = resident.monthlyPayments.find(
+                                const payment = (resident.monthlyPayments || []).find(
                                     (p: any) => p.month === colIdx && p.year === selectedYear
                                 );
                                 return payment ? payment.amount.toLocaleString() : "0";
                             }}
+                            onCellClick={(res, colIdx) => {
+                                const payment = (res.monthlyPayments || []).find(
+                                    (p: any) => p.month === colIdx && p.year === selectedYear
+                                );
+                                const currentStatus = payment ? payment.status : 0;
+                                const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
+                                const amount = nextStatus === 1 ? fees.monthlyFee : (payment?.amount || 0);
+                                updateMonthlyStatus(res.id, colIdx, nextStatus, amount);
+                            }}
+                            onValueChange={(res, colIdx, newValue) => {
+                                const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
+                                const status = amount >= fees.monthlyFee ? 1 : amount > 0 ? 0 : -1;
+                                updateMonthlyStatus(res.id, colIdx, status, amount);
+                            }}
+                            onMonthlyFeeChange={(val) => {
+                                const num = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+                                updateGlobalFees({ monthlyFee: num });
+                            }}
                             monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
                             showYearlyFeeLegend={false}
-                            minWidthClass="min-w-[1200px]"
+                            minWidthClass="min-w-[1100px]"
                         />
                     </div>
 
-                    <div className="pt-8 border-t border-gray-400">
-                        <h3 className="text-sm font-bold text-gray-100 mb-6 uppercase tracking-wider">Yearly Maintenance Fees</h3>
+                    <div>
+                        <div className="flex items-center gap-4 mb-8">
+                          <h3 className="text-sm font-black text-gray-100 uppercase tracking-[0.2em]">Yearly Maintenance Fees</h3>
+                          <div className="h-px bg-gray-400 flex-1"></div>
+                        </div>
                         <Table 
                             theme="blue"
                             type="numerical"
                             residents={financeData}
                             columns={[`Fee ${selectedYear}`]}
-                            readOnly={true}
+                            readOnly={isReadOnly}
+                            onRowClick={(row) => router.push(`/finance/${row.id}`)}
                             getValue={(resident: ResidentFinance) => {
-                                const payment = resident.securityPayments.find(
+                                const payment = (resident.securityPayments || []).find(
                                     (p: any) => p.year === selectedYear
                                 );
                                 return payment ? payment.amount.toLocaleString() : "0";
+                            }}
+                            onCellClick={(res) => {
+                                const payment = (res.securityPayments || []).find(
+                                    (p: any) => p.year === selectedYear
+                                );
+                                const currentStatus = payment ? payment.status : 0;
+                                const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
+                                const amount = nextStatus === 1 ? fees.yearlyFee : (payment?.amount || 0);
+                                updateSecurityStatus(res.id, nextStatus, amount);
+                            }}
+                            onValueChange={(res, colIdx, newValue) => {
+                                const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
+                                const status = amount >= fees.yearlyFee ? 1 : amount > 0 ? 0 : -1;
+                                updateSecurityStatus(res.id, status, amount);
+                            }}
+                            onYearlyFeeChange={(val) => {
+                                const num = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+                                updateGlobalFees({ yearlyFee: num });
                             }}
                             yearlyFee={`₹ ${fees.yearlyFee.toLocaleString()}`}
                             showMonthlyFeeLegend={false}

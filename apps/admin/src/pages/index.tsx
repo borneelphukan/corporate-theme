@@ -13,7 +13,7 @@ const API_BASE_URL = 'http://localhost:4000';
 
 const AdminDashboard = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance'>('dashboard');
   const [userRole, setUserRole] = useState('');
   const [stats, setStats] = useState({
     residents: 0,
@@ -80,9 +80,9 @@ const AdminDashboard = () => {
         <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-12">
+        <main className="flex-1 ml-64 p-8 min-w-0 overflow-x-hidden">
           {activeTab === 'dashboard' ? (
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <div className="mb-12">
                 <h1 className="text-3xl md:text-4xl">
                   Admin Dashboard
@@ -106,19 +106,18 @@ const AdminDashboard = () => {
                 ))}
               </div>
 
-              {/* Finance Section added to Dashboard as requested */}
-              <div className="mt-10">
-                <Finance />
-              </div>
-
             </div>
           ) : activeTab === 'announcements' ? (
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <Announcements />
             </div>
           ) : activeTab === 'residents' ? (
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               <Residents />
+            </div>
+          ) : activeTab === 'finance' ? (
+            <div className="max-w-7xl mx-auto">
+              <Finance />
             </div>
           ) : activeTab === 'rules' ? (
             <div className="max-w-5xl mx-auto">

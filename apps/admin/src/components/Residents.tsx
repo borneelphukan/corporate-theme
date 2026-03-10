@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@legacy-apartment/ui';
+import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table } from '@legacy-apartment/ui';
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
 import EditIcon from '@mui/icons-material/Edit';
@@ -294,87 +294,80 @@ const Residents = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-400 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] pb-12 mb-20">
+      <div className="mb-20">
         {loading ? (
-            <div className="text-center py-20 text-gray-100">Loading residents...</div>
+            <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              Loading residents...
+            </div>
         ) : (residents.length === 0 && !isFormOpen) ? (
-            <p className="text-center py-20 text-gray-100">
+            <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                 No residents data available. Add one to get started.
-            </p>
+            </div>
         ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-gray-400">
-                    <th className="py-5 px-6 text-xs font-bold uppercase tracking-wider text-gray-100">Resident</th>
-                    <th className="py-5 px-6 text-xs font-bold uppercase tracking-wider text-gray-100">Apartment</th>
-                    <th className="py-5 px-6 text-xs font-bold uppercase tracking-wider text-gray-100">Phone</th>
-                    <th className="py-5 px-6 text-xs font-bold uppercase tracking-wider text-gray-100">Designation</th>
-                    <th className="py-5 px-6 text-xs font-bold uppercase tracking-wider text-gray-100 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {residents.map((res) => (
-                    <tr key={res.id} className="hover:bg-orange-50/30 transition-colors group">
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-4">
-                          <div className="size-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0 shadow-sm">
-                            {res.avatar ? (
-                                <img src={res.avatar} alt={res.name} className="w-full h-full object-cover" />
-                            ) : (
-                                <PersonIcon className="text-gray-400 size-6" />
-                            )}
-                          </div>
-                          <span className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{res.name}</span>
+            <Table 
+              data={residents}
+              type="general"
+              theme="orange"
+              columns={['resident', 'residence', 'phone_no', 'designation', 'actions']}
+              headers={['Resident', 'Apartment', 'Phone', 'Designation', 'Actions']}
+              minWidthClass="min-w-[800px]"
+              showMonthlyFeeLegend={false}
+              showYearlyFeeLegend={false}
+              renderCell={(res, col) => {
+                switch(col) {
+                  case 'resident':
+                    return (
+                      <div className="flex items-center gap-4">
+                        <div className="size-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0 shadow-sm">
+                          {res.avatar ? (
+                              <img src={res.avatar} alt={res.name} className="w-full h-full object-cover" />
+                          ) : (
+                              <PersonIcon className="text-gray-400 size-6" />
+                          )}
                         </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="text-orange-500 font-bold">{res.residence}</span>
-                      </td>
-                      <td className="py-4 px-6 font-medium text-gray-100">{res.phone_no}</td>
-                      <td className="py-4 px-6">
-                        {res.designation && res.designation !== 'None' ? (
-                          <span className="bg-orange-100 text-orange-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-tighter shadow-sm">
-                            {res.designation}
-                          </span>
-                        ) : (
-                          <span className="text-gray-300 text-sm">N/A</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex justify-end gap-2">
+                        <span className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{res.name}</span>
+                      </div>
+                    );
+                  case 'residence':
+                    return <span className="text-orange-500 font-bold">{res.residence}</span>;
+                  case 'phone_no':
+                    return <span className="font-medium text-gray-100">{res.phone_no}</span>;
+                  case 'designation':
+                    return res.designation && res.designation !== 'None' ? (
+                      <span className="bg-orange-100 text-orange-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-tighter shadow-sm">
+                        {res.designation}
+                      </span>
+                    ) : (
+                      <span className="text-gray-300 text-sm">N/A</span>
+                    );
+                  case 'actions':
+                    return (
+                      <div className="flex justify-end gap-2">
+                        {isPresident && (
                           <Button 
                               variant="outline"
                               size="icon"
-                              onClick={() => router.push(`/finance/${res.id}`)}
-                              icon={{ left: <PaymentsIcon className="size-5" /> }}
-                              title="Finance"
+                              onClick={() => handleEdit(res)}
+                              icon={{ left: <EditIcon className="size-5" /> }}
+                              title="Edit"
                           />
-                          {isPresident && (
-                            <Button 
-                                variant="outline"
-                                size="icon"
-                                onClick={() => handleEdit(res)}
-                                icon={{ left: <EditIcon className="size-5" /> }}
-                                title="Edit"
-                            />
-                          )}
-                          {isPresident && (
-                            <Button 
-                                variant="destructive"
-                                size="icon"
-                                onClick={() => handleDelete(res.id)}
-                                icon={{ left: <DeleteIcon className="size-5" /> }}
-                                title="Delete"
-                            />
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        )}
+                        {isPresident && (
+                          <Button 
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDelete(res.id)}
+                              icon={{ left: <DeleteIcon className="size-5" /> }}
+                              title="Delete"
+                          />
+                        )}
+                      </div>
+                    );
+                  default:
+                    return null;
+                }
+              }}
+            />
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { SettingService } from './setting.service';
 import { Public } from '../auth/public.decorator';
 
@@ -8,12 +8,12 @@ export class SettingController {
 
   @Public()
   @Get()
-  getSettings() {
-    return this.settingService.getSettings();
+  getSettings(@Query('year') year?: string) {
+    return this.settingService.getSettings(year ? parseInt(year) : undefined);
   }
 
   @Post()
-  updateSettings(@Body() data: { monthlyFee?: number; yearlyFee?: number }) {
+  updateSettings(@Body() data: { year?: number; monthlyFee?: number; yearlyFee?: number }) {
     return this.settingService.updateSettings(data);
   }
 }

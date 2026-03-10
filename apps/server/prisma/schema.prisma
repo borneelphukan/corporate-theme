@@ -83,6 +83,7 @@ model SecurityPayment {
 
 model Setting {
   id         Int      @id @default(autoincrement())
+  year       Int      @unique
   monthlyFee Float    @default(1000)
   yearlyFee  Float    @default(5000)
   updatedAt  DateTime @updatedAt
