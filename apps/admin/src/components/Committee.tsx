@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table } from '@legacy-apartment/ui';
+import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Badge } from '@legacy-apartment/ui';
 import Swal from 'sweetalert2';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -269,7 +269,7 @@ const Committee = () => {
                       </div>
                     );
                   case 'role':
-                    return <span className="bg-orange-100 text-orange-600 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-tighter">{member.role}</span>;
+                    return <Badge label={member.role} type="default" size="sm" />;
                   case 'residence':
                     return <span className="text-orange-500 font-bold">{member.residence}</span>;
                   case 'phone_no':

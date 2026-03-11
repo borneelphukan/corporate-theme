@@ -9,16 +9,28 @@ import FeedbackIcon from '@mui/icons-material/Feedback';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'none';
-  onTabChange?: (tab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee') => void;
+  activeTab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings' | 'none';
+  onTabChange?: (tab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings') => void;
   isOpen?: boolean;
   onClose?: () => void;
 }
 
 const Sidebar = ({ activeTab, onTabChange, isOpen, onClose }: SidebarProps) => {
   const router = useRouter();
+  const [isPresident, setIsPresident] = React.useState(false);
+
+  React.useEffect(() => {
+    const stored = localStorage.getItem('adminUser');
+    if (stored) {
+      try {
+        const user = JSON.parse(stored);
+        setIsPresident(user?.role === 'president');
+      } catch {}
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -116,7 +128,20 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, onClose }: SidebarProps) => {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-gray-50">
+        <div className="p-4 border-t border-gray-50 flex flex-col gap-2">
+          {isPresident && (
+            <button 
+              onClick={() => handleNavClick('settings')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                activeTab === 'settings'
+                  ? 'bg-orange-500 text-white'
+                  : 'text-gray-100 hover:bg-orange-50 hover:text-orange-500'
+              }`}
+            >
+              <SettingsIcon className="size-5" />
+              <span className="font-bold text-sm">Settings</span>
+            </button>
+          )}
           <button 
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-orange-50 transition-all duration-300 text-gray-100 hover:text-orange-500"

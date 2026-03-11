@@ -8,6 +8,7 @@ import Rules from '@/components/Rules';
 import Complaints from '@/components/Complaints';
 import Finance from '@/components/Finance';
 import Committee from '@/components/Committee';
+import Settings from '@/components/Settings';
 import Sidebar from '@/components/Sidebar';
 import api from '@/lib/api';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -15,7 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 const AdminDashboard = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings'>('dashboard');
   const [userRole, setUserRole] = useState('');
   const [stats, setStats] = useState({
     residents: 0,
@@ -152,6 +153,10 @@ const AdminDashboard = () => {
           ) : activeTab === 'committee' ? (
             <div className="max-w-7xl mx-auto">
               <Committee />
+            </div>
+          ) : activeTab === 'settings' ? (
+            <div className="max-w-7xl mx-auto">
+              <Settings />
             </div>
           ) : null}
         </main>

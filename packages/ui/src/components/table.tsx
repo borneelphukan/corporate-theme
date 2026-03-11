@@ -138,13 +138,13 @@ const Table = ({
                 <tr>
                   {type !== "general" && (
                     <>
-                      <th className="py-4 px-4 md:px-6 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50">
+                      <th className="py-4 px-4 md:px-6 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left">
                         Resident
                       </th>
-                      <th className="py-4 px-4 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50">
+                      <th className="py-4 px-4 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left">
                         Apartment
                       </th>
-                      <th className="py-4 px-4 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50">
+                      <th className="py-4 px-4 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left">
                         Phone
                       </th>
                     </>
@@ -159,7 +159,7 @@ const Table = ({
                       <th 
                         key={idx} 
                         className={`py-4 px-4 text-xs uppercase tracking-tighter font-black transition-colors ${headerHighlight} ${
-                          type === 'general' && idx === (headers || columns).length - 1 ? 'text-right' : 'text-center'
+                          type === 'general' ? (idx === (headers || columns).length - 1 ? 'text-right' : 'text-left') : 'text-center'
                         } ${onHeaderClick ? "cursor-pointer hover:bg-gray-400" : ""}`}
                         onClick={() => onHeaderClick?.(idx)}
                       >

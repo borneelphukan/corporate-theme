@@ -1,6 +1,8 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, Get, Delete, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Public } from '../auth/public.decorator';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -16,5 +18,19 @@ export class UsersController {
   @Post('register')
   register(@Body() userData: any) {
     return this.usersService.createUser(userData);
+  }
+
+  @Get()
+  @Roles('president')
+  @UseGuards(RolesGuard)
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Delete(':id')
+  @Roles('president')
+  @UseGuards(RolesGuard)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.remove(id);
   }
 }

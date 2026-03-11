@@ -14,3 +14,4 @@ export { Upload } from "./components/upload";
 export * from "./components/dropdownMenu";
 export { Toggle } from "./components/toggle";
 export { Switch } from "./components/switch";
+export { Badge } from "./components/badge";

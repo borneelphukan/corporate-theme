@@ -74,4 +74,24 @@ export class UsersService {
       },
     };
   }
+
+  async findAll() {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async remove(id: number) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
 }
