@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import emailjs from "emailjs-com";
-import { Button } from "@legacy-apartment/ui";
+import { Button, Input, TextArea } from "@legacy-apartment/ui";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -78,69 +78,52 @@ const ContactForm = () => {
           <div className="w-full lg:w-1/2">
             <form
               onSubmit={handleSubmit}
-              className="w-full border shadow-lg rounded px-8 pt-6 pb-8 mb-4 mx-auto"
+              className="w-full border border-gray-400 shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label
-                    className="block text-sm font-bold mb-2"
-                    htmlFor="firstName"
-                  >
-                    First Name
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  <Input
                     id="firstName"
+                    label="First Name"
                     type="text"
                     value={formData.firstName}
                     onChange={handleChange}
                     placeholder="First Name"
+                    required
                   />
                 </div>
                 <div>
-                  <label
-                    className="block text-sm font-bold mb-2"
-                    htmlFor="lastName"
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  <Input
                     id="lastName"
+                    label="Last Name"
                     type="text"
                     value={formData.lastName}
                     onChange={handleChange}
                     placeholder="Last Name"
+                    required
                   />
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-bold mb-2" htmlFor="email">
-                  Email Address
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                <Input
                   id="email"
+                  label="Email Address"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email Address"
+                  required
                 />
               </div>
               <div className="mb-6">
-                <label
-                  className="block text-sm font-bold mb-2"
-                  htmlFor="message"
-                >
-                  Message
-                </label>
-                <textarea
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                <TextArea
                   id="message"
+                  label="Message"
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Your message here"
                   rows={6}
+                  required
                 />
               </div>
               <div className="flex items-center justify-between pt-4">

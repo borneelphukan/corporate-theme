@@ -15,6 +15,7 @@ export class UsersController {
     return this.usersService.login(loginDto.email, loginDto.password);
   }
 
+  @Public()
   @Post('register')
   register(@Body() userData: any) {
     return this.usersService.createUser(userData);

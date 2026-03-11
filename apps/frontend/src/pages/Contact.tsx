@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import DetailsStack from "@/components/Contact/DetailsStack";
 import { Breadcrumb, Banner } from "@legacy-apartment/ui";

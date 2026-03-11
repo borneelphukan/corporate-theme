@@ -26,6 +26,7 @@ import * as XLSX from 'xlsx';
 import api from '@/lib/api';
 import MenuIcon from '@mui/icons-material/Menu';
 import DownloadIcon from '@mui/icons-material/Download';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 
 const months = [
@@ -322,7 +323,7 @@ const FinancePage = () => {
                       XLSX.utils.book_append_sheet(wb, ws, `${year}`);
                     });
 
-                    XLSX.writeFile(wb, `finance-${resident.name.replace(/\s+/g, '-').toLowerCase()}-all-years.xlsx`);
+                    XLSX.writeFile(wb, `finance-${resident.name.replace(/\s+/g, '-').toLowerCase()}.xlsx`);
                   }}
                   variant="outline"
                   size="sm"
@@ -333,8 +334,8 @@ const FinancePage = () => {
               </div>
               <Table 
                 data={months.map((m, i) => ({ month: m, index: i }))}
-                columns={['month', 'monthlyRate', 'amount', 'type', 'date', 'lateFee']}
-                headers={['Month', 'Monthly Rate', 'Amount Paid', 'Payment Mode', 'Payment Received On', 'Late Payment']}
+                columns={['month', 'monthlyRate', 'amount', 'type', 'date', 'lateFee', 'actions']}
+                headers={['Month', 'Monthly Rate', 'Amount Paid', 'Payment Mode', 'Payment Received On', 'Late Payment', '']}
                 type="general"
                 theme="orange"
                 className="!shadow-none !border-gray-400"
@@ -361,7 +362,7 @@ const FinancePage = () => {
                         label="Amount"
                         hideLabel
                         type="number"
-                        className="w-24 !py-1"
+                        className="w-24"
                         value={payment?.amount ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
@@ -374,7 +375,7 @@ const FinancePage = () => {
                   if (col === 'type') {
                     if (!isPresident) return payment?.paymentType || '-';
                     return (
-                      <DropdownMenu>
+                      <DropdownMenu className='py-1'>
                         <DropdownMenuTrigger asChild>
                           <button className="w-24 p-1 border border-gray-400 rounded text-sm text-left flex items-center justify-between">
                             {payment?.paymentType || 'Select'}
@@ -397,7 +398,7 @@ const FinancePage = () => {
                         label="Date"
                         hideLabel
                         type="date"
-                        className="w-36 !py-1"
+                        className="w-36"
                         value={payment?.paymentDate ? new Date(payment.paymentDate).toISOString().split('T')[0] : ''}
                         onChange={(e) => updateMonthlyStatus(row.index, { paymentDate: e.target.value })}
                       />
@@ -412,13 +413,30 @@ const FinancePage = () => {
                         label="Late Fee"
                         hideLabel
                         type="number"
-                        className="w-24 !py-1"
+                        className="w-20"
                         value={payment?.lateFee ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
                           updateMonthlyStatus(row.index, { lateFee: val });
                         }}
                       />
+                    );
+                  }
+
+                  if (col === 'actions') {
+                    if (!isPresident) return null;
+                    return (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => updateMonthlyStatus(row.index, { 
+                          amount: 0, 
+                          status: 0, 
+                          paymentType: '', 
+                          paymentDate: '', 
+                          lateFee: 0 
+                        })}
+                      >Clear</Button>
                     );
                   }
 
@@ -455,7 +473,7 @@ const FinancePage = () => {
                         label="Yearly Rate"
                         hideLabel
                         type="number"
-                        className="w-24 !py-1"
+                        className="w-24"
                         value={payment?.yearlyRate ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
@@ -473,7 +491,7 @@ const FinancePage = () => {
                         label="Payment Made"
                         hideLabel
                         type="number"
-                        className="w-24 !py-1"
+                        className="w-24"
                         value={payment?.amount ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
@@ -486,7 +504,7 @@ const FinancePage = () => {
                   if (col === 'type') {
                     if (!isPresident) return payment?.paymentType || '-';
                     return (
-                      <DropdownMenu>
+                      <DropdownMenu className='py-1'>
                         <DropdownMenuTrigger asChild>
                           <button className="w-24 p-1 border border-gray-400 rounded text-sm text-left flex items-center justify-between">
                             {payment?.paymentType || 'Select'}
@@ -509,7 +527,7 @@ const FinancePage = () => {
                         label="Date"
                         hideLabel
                         type="date"
-                        className="w-36 !py-1"
+                        className="w-36"
                         value={payment?.paymentDate ? new Date(payment.paymentDate).toISOString().split('T')[0] : ''}
                         onChange={(e) => updateSecurityStatus(row.year, { paymentDate: e.target.value })}
                       />
@@ -524,7 +542,7 @@ const FinancePage = () => {
                         label="Late Fee"
                         hideLabel
                         type="number"
-                        className="w-24 !py-1"
+                        className="w-20"
                         value={payment?.lateFee ?? 0}
                         onChange={(e) => {
                           const val = parseFloat(e.target.value) || 0;
