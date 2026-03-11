@@ -126,3 +126,16 @@ model CommitteeMember {
 
   @@map("committee_member")
 }
+
+model Document {
+  id          Int      @id @default(autoincrement())
+  document    String   // Base64 or URL
+  fileName    String?
+  date        DateTime // Date of Upload (user defined)
+  description String?
+  category    String   // Elevator Maintenance, Generator Maintenance, etc
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("document")
+}

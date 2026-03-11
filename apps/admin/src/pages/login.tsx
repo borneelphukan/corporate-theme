@@ -26,6 +26,27 @@ export default function Login() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please enter both email and password',
+        confirmButtonColor: '#f97316',
+      });
+      return;
+    }
+
+    if (isRegisterMode && (!firstName || !lastName)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please fill in all required fields',
+        confirmButtonColor: '#f97316',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     const endpoint = isRegisterMode ? 'register' : 'login';
@@ -61,12 +82,13 @@ export default function Login() {
           confirmButtonColor: '#f97316',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please check your credentials.';
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred',
+        title: 'Authentication Failed',
+        text: errorMessage,
         confirmButtonColor: '#f97316',
       });
     } finally {

@@ -10,10 +10,11 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
 import SettingsIcon from '@mui/icons-material/Settings';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings' | 'none';
-  onTabChange?: (tab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings') => void;
+  activeTab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings' | 'documents' | 'none';
+  onTabChange?: (tab: 'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings' | 'documents') => void;
   isOpen?: boolean;
   onClose?: () => void;
 }
@@ -72,6 +73,11 @@ const Sidebar = ({ activeTab, onTabChange, isOpen, onClose }: SidebarProps) => {
       id: 'complaints', 
       label: 'Complaints', 
       icon: <FeedbackIcon className="size-5" />
+    },
+    { 
+      id: 'documents', 
+      label: 'Documents', 
+      icon: <DescriptionIcon className="size-5" />
     },
   ];
 

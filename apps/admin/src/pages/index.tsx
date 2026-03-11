@@ -12,11 +12,12 @@ import Settings from '@/components/Settings';
 import Sidebar from '@/components/Sidebar';
 import api from '@/lib/api';
 import MenuIcon from '@mui/icons-material/Menu';
+import Documents from '@/components/Documents';
 
 
 const AdminDashboard = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'announcements' | 'residents' | 'rules' | 'complaints' | 'finance' | 'committee' | 'settings' | 'documents'>('dashboard');
   const [userRole, setUserRole] = useState('');
   const [stats, setStats] = useState({
     residents: 0,
@@ -37,6 +38,12 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
     const stored = localStorage.getItem('adminUser');
     if (stored) {
       try {
@@ -50,10 +57,10 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
       try {
         const [resResponse, annResponse, rulesResponse, complaintsResponse] = await Promise.all([
-          api.get('/residents'),
-          api.get('/announcements'),
-          api.get('/rules'),
-          api.get('/complaints')
+          api.get('/residents').catch(() => ({ data: [] })),
+          api.get('/announcements').catch(() => ({ data: [] })),
+          api.get('/rules').catch(() => ({ data: [] })),
+          api.get('/complaints').catch(() => ({ data: [] }))
         ]);
         
         const residents = resResponse.data || [];
@@ -157,6 +164,10 @@ const AdminDashboard = () => {
           ) : activeTab === 'settings' ? (
             <div className="max-w-7xl mx-auto">
               <Settings />
+            </div>
+          ) : activeTab === 'documents' ? (
+            <div className="max-w-7xl mx-auto">
+              <Documents />
             </div>
           ) : null}
         </main>

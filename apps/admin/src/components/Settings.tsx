@@ -50,14 +50,13 @@ const Settings = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (id === currentUserId) {
-      Swal.fire('Action Denied', 'You cannot delete your own account while logged in.', 'error');
-      return;
-    }
+    const isSelf = id === currentUserId;
 
     const result = await Swal.fire({
       title: 'Delete user account?',
-      text: "This action is irreversible and permanently removes the administrator's access to the society portal.",
+      text: isSelf
+        ? "You are about to delete your own account. This action is irreversible and you will be logged out immediately."
+        : "This action is irreversible and permanently removes the administrator's access to the society portal.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#f97316',
@@ -68,8 +67,15 @@ const Settings = () => {
     if (result.isConfirmed) {
       try {
         await api.delete(`/users/${id}`);
-        Swal.fire('Deleted!', 'The user account has been successfully removed.', 'success');
-        fetchUsers();
+        Swal.fire('Deleted!', 'The user account has been successfully removed.', 'success').then(() => {
+          if (isSelf) {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = '/login';
+          } else {
+            fetchUsers();
+          }
+        });
       } catch (error) {
         Swal.fire('Error', 'Failed to delete user account.', 'error');
       }
@@ -133,7 +139,6 @@ const Settings = () => {
                           size="icon" 
                           onClick={() => handleDelete(user.id)} 
                           icon={{ left: <DeleteIcon className="size-5" /> }} 
-                          disabled={user.id === currentUserId}
                         />
                       </div>
                     );
