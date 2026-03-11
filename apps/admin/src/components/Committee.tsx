@@ -259,7 +259,7 @@ const Committee = () => {
               Loading committee...
             </div>
         ) : members.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 italic">
+            <div className="text-center">
                 No committee members listed yet.
             </div>
         ) : (

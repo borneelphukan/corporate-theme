@@ -43,6 +43,7 @@ const FinancePage = () => {
   const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
   const [isPresident, setIsPresident] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const yearlyColumns = ['2023', '2024', '2025', '2026', '2027'];
   const [alertDialog, setAlertDialog] = useState<{
     open: boolean;
     title: string;
@@ -141,23 +142,23 @@ const FinancePage = () => {
     }
   };
 
-  const updateSecurityStatus = async (status: number, amount?: number) => {
+  const updateSecurityStatus = async (year: number, status: number, amount?: number) => {
     // Optimistic update
     setResident((prev: any) => {
       if (!prev) return prev;
       const newPayments = [...prev.securityPayments];
-      const idx = newPayments.findIndex(p => p.year === selectedYear);
+      const idx = newPayments.findIndex(p => p.year === year);
       if (idx > -1) {
         newPayments[idx] = { ...newPayments[idx], status, amount: amount ?? newPayments[idx].amount };
       } else {
-        newPayments.push({ residentId: parseInt(id as string), year: selectedYear, status, amount: amount ?? 0 });
+        newPayments.push({ residentId: parseInt(id as string), year: year, status, amount: amount ?? 0 });
       }
       return { ...prev, securityPayments: newPayments };
     });
 
     try {
       await api.post(`/finance/security/${id}`, {
-        year: selectedYear,
+        year: year,
         status,
         amount
       });
@@ -169,6 +170,17 @@ const FinancePage = () => {
         description: 'Failed to update status',
         type: 'error'
       });
+    }
+  };
+
+  const updateResidentMonthlyRate = async (rate: number) => {
+    try {
+      await api.patch(`/residents/${id}`, {
+        monthlyRate: rate
+      });
+      fetchResidentFinance();
+    } catch (error) {
+      console.error('Error updating resident monthly rate:', error);
     }
   };
 
@@ -345,16 +357,21 @@ const FinancePage = () => {
                 columns={months}
                 type="numerical"
                 theme="orange"
-                readOnly={true}
+                monthlyFee={`₹ ${(resident.monthlyRate || fees.monthlyFee).toLocaleString()}`}
                 getValue={(res, colIdx) => {
                   const payment = res.monthlyPayments.find(
                     (p: any) => p.month === colIdx && p.year === selectedYear
                   );
                   return payment ? payment.amount.toLocaleString() : "0";
                 }}
-                monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
+                onMonthlyRateChange={(_, val) => {
+                  const rate = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+                  updateResidentMonthlyRate(rate);
+                }}
+                showMonthlyFeeLegend={false}
                 showYearlyFeeLegend={false}
-                className="!shadow-none !border-gray-500"
+                className="!shadow-none !border-gray-400"
+                readOnly={!isPresident}
               />
             </div>
 
@@ -362,19 +379,37 @@ const FinancePage = () => {
                <h3 className="text-sm font-bold text-gray-100 mb-6 uppercase tracking-wider">Yearly Maintenance Fees</h3>
                <Table 
                 residents={[resident]}
-                columns={[`Fee ${selectedYear}`]}
+                columns={yearlyColumns}
                 type="numerical"
                 theme="blue"
-                readOnly={true}
-                getValue={() => {
+                showMonthlyRate={false}
+                readOnly={!isPresident}
+                getValue={(res, colIdx) => {
+                  const year = parseInt(yearlyColumns[colIdx]);
                   const payment = resident.securityPayments.find(
-                    (p: any) => p.year === selectedYear
+                    (p: any) => p.year === year
                   );
                   return payment ? payment.amount.toLocaleString() : "0";
                 }}
+                onCellClick={(res, colIdx) => {
+                  const year = parseInt(yearlyColumns[colIdx]);
+                  const payment = (res.securityPayments || []).find(
+                    (p: any) => p.year === year
+                  );
+                  const currentStatus = payment ? payment.status : 0;
+                  const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
+                  const amount = nextStatus === 1 ? fees.yearlyFee : (payment?.amount || 0);
+                  updateSecurityStatus(year, nextStatus, amount);
+                }}
+                onValueChange={(res, colIdx, newValue) => {
+                  const year = parseInt(yearlyColumns[colIdx]);
+                  const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
+                  const status = amount >= fees.yearlyFee ? 1 : amount > 0 ? 0 : -1;
+                  updateSecurityStatus(year, status, amount);
+                }}
                 yearlyFee={`₹ ${fees.yearlyFee.toLocaleString()}`}
                 showMonthlyFeeLegend={false}
-                className="!shadow-none !border-gray-500"
+                className="!shadow-none !border-gray-400"
                 minWidthClass="min-w-full"
               />
             </div>

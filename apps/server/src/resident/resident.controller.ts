@@ -11,7 +11,7 @@ export class ResidentController {
   @Post()
   @Roles('president')
   @UseGuards(RolesGuard)
-  create(@Body() createResidentDto: { avatar?: string; name: string; residence: string; phone_no: string; showInWebsite?: boolean }) {
+  create(@Body() createResidentDto: { avatar?: string; name: string; residence: string; phone_no: string; monthlyRate?: number; showInWebsite?: boolean }) {
     return this.residentService.create(createResidentDto);
   }
 
@@ -28,9 +28,9 @@ export class ResidentController {
   }
 
   @Patch(':id')
-  @Roles('president')
+  @Roles('president', 'treasurer')
   @UseGuards(RolesGuard)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateResidentDto: { avatar?: string; name?: string; residence?: string; phone_no?: string; showInWebsite?: boolean }) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateResidentDto: { avatar?: string; name?: string; residence?: string; phone_no?: string; monthlyRate?: number; showInWebsite?: boolean }) {
     return this.residentService.update(id, updateResidentDto);
   }
 

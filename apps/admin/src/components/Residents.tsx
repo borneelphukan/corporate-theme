@@ -14,6 +14,7 @@ interface Resident {
   name: string;
   residence: string;
   phone_no: string;
+  monthlyRate: number;
   showInWebsite: boolean;
 }
 
@@ -26,6 +27,7 @@ const Residents = () => {
     name: '',
     residence: '',
     phone_no: '',
+    monthlyRate: 1000,
     avatar: '',
     showInWebsite: false,
   });
@@ -101,7 +103,7 @@ const Residents = () => {
       setIsFormOpen(false);
       setEditingId(null);
       setAvatarFiles([]);
-      setFormData({ name: '', residence: '', phone_no: '', avatar: '', showInWebsite: false });
+      setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '', showInWebsite: false });
       fetchResidents();
     } catch (error: any) {
       setAlertDialog({
@@ -119,6 +121,7 @@ const Residents = () => {
       name: res.name,
       residence: res.residence,
       phone_no: res.phone_no,
+      monthlyRate: res.monthlyRate || 1000,
       avatar: res.avatar || '',
       showInWebsite: res.showInWebsite || false,
     });
@@ -164,7 +167,7 @@ const Residents = () => {
               icon={{ left: <AddIcon className="size-5" /> }}
               onClick={() => {
                   setEditingId(null);
-                  setFormData({ name: '', residence: '', phone_no: '', avatar: '', showInWebsite: false });
+                  setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '', showInWebsite: false });
                   setAvatarFiles([]);
                   setIsFormOpen(true);
               }}
@@ -205,6 +208,15 @@ const Residents = () => {
                 value={formData.phone_no}
                 onChange={(e) => setFormData({...formData, phone_no: e.target.value})}
                 placeholder="Enter phone number"
+              />
+              <Input 
+                id="monthlyRate"
+                label="Monthly Rate (₹)"
+                required
+                type="number" 
+                value={formData.monthlyRate}
+                onChange={(e) => setFormData({...formData, monthlyRate: parseFloat(e.target.value) || 0})}
+                placeholder="Enter monthly rate"
               />
               <div className="flex flex-col justify-center px-4 py-3">
                 <Switch
@@ -249,7 +261,7 @@ const Residents = () => {
               Loading residents...
             </div>
         ) : (residents.length === 0 && !isFormOpen) ? (
-            <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="text-center text-gray-100">
                 No residents data available. Add one to get started.
             </div>
         ) : (
@@ -257,8 +269,8 @@ const Residents = () => {
               data={editingId && isFormOpen ? residents.filter(r => r.id !== editingId) : residents}
               type="general"
               theme="orange"
-              columns={['resident', 'residence', 'phone_no', 'actions']}
-              headers={['Resident', 'Apartment', 'Phone', 'Actions']}
+              columns={['resident', 'residence', 'phone_no', 'monthlyRate', 'actions']}
+              headers={['Resident', 'Apartment', 'Phone', 'Monthly Rate', 'Actions']}
               minWidthClass="min-w-[600px]"
               showMonthlyFeeLegend={false}
               showYearlyFeeLegend={false}
@@ -281,6 +293,8 @@ const Residents = () => {
                     return <span className="text-orange-500 font-bold">{res.residence}</span>;
                   case 'phone_no':
                     return <span className="font-medium text-gray-100">{res.phone_no}</span>;
+                  case 'monthlyRate':
+                    return <span className="font-bold text-orange-600">₹ {res.monthlyRate?.toLocaleString() || "0"}</span>;
                   case 'actions':
                     return (
                       <div className="flex justify-end gap-2">

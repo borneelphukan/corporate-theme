@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider   = "prisma-client-js"
   engineType = "library"
@@ -38,30 +32,31 @@ model Announcement {
 }
 
 model Resident {
-  id              Int               @id @default(autoincrement())
-  avatar          String?
-  name            String
-  residence       String
-  phone_no        String
-  showInWebsite   Boolean           @default(false)
-  monthlyPayments MonthlyPayment[]
+  id               Int               @id @default(autoincrement())
+  avatar           String?
+  name             String
+  residence        String
+  phone_no         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  showInWebsite    Boolean           @default(false)
+  monthlyRate      Float             @default(1000)
+  monthlyPayments  MonthlyPayment[]
   securityPayments SecurityPayment[]
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
 
   @@map("resident")
 }
 
 model MonthlyPayment {
   id         Int      @id @default(autoincrement())
-  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
   residentId Int
-  month      Int      // 0-11
+  month      Int
   year       Int
-  status     Int      @default(0) // 1: paid, -1: unpaid, 0: pending
+  status     Int      @default(0)
   amount     Float    @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
 
   @@unique([residentId, month, year])
   @@map("monthly_payment")
@@ -69,13 +64,13 @@ model MonthlyPayment {
 
 model SecurityPayment {
   id         Int      @id @default(autoincrement())
-  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
   residentId Int
   year       Int
-  status     Int      @default(0) // 1: paid, -1: unpaid, 0: pending
+  status     Int      @default(0)
   amount     Float    @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  resident   Resident @relation(fields: [residentId], references: [id], onDelete: Cascade)
 
   @@unique([residentId, year])
   @@map("security_payment")
@@ -83,10 +78,10 @@ model SecurityPayment {
 
 model Setting {
   id         Int      @id @default(autoincrement())
-  year       Int      @unique
   monthlyFee Float    @default(1000)
   yearlyFee  Float    @default(5000)
   updatedAt  DateTime @updatedAt
+  year       Int      @unique
 
   @@map("setting")
 }
@@ -129,11 +124,11 @@ model CommitteeMember {
 
 model Document {
   id          Int      @id @default(autoincrement())
-  document    String   // Base64 or URL
+  document    String
   fileName    String?
-  date        DateTime // Date of Upload (user defined)
+  date        DateTime
   description String?
-  category    String   // Elevator Maintenance, Generator Maintenance, etc
+  category    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -14,6 +14,7 @@ import { ComplaintModule } from './complaint/complaint.module';
 import { CommitteeModule } from './committee/committee.module';
 import { DocumentModule } from './document/document.module';
 import { AuthGuard } from './auth/auth.guard';
+import { RolesGuard } from './auth/roles.guard';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuthGuard } from './auth/auth.guard';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    RolesGuard,
   ],
 })
 export class AppModule {}

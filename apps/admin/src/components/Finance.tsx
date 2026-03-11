@@ -40,6 +40,7 @@ interface ResidentFinance {
     name: string;
     residence: string;
     phone_no: string;
+    monthlyRate: number;
     monthlyPayments: MonthlyPayment[];
     securityPayments: SecurityPayment[];
 }
@@ -54,6 +55,7 @@ const Finance = () => {
     const [selectedMonth, setSelectedMonth] = useState(currentMonthIdx);
     const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
     const [canEditFinance, setCanEditFinance] = useState(false);
+    const yearlyColumns = ['2023', '2024', '2025', '2026', '2027'];
 
     useEffect(() => {
         const stored = localStorage.getItem('adminUser');
@@ -145,16 +147,27 @@ const Finance = () => {
         }
     };
 
-    const updateSecurityStatus = async (residentId: number, status: number, amount?: number) => {
+    const updateSecurityStatus = async (residentId: number, year: number, status: number, amount?: number) => {
         try {
             await api.post(`/finance/security/${residentId}`, {
-                year: selectedYear,
+                year: year,
                 status,
                 amount
             });
             fetchFinanceData();
         } catch (error) {
             console.error('Error updating security status:', error);
+        }
+    };
+
+    const updateResidentMonthlyRate = async (residentId: number, rate: number) => {
+        try {
+            await api.patch(`/residents/${residentId}`, {
+                monthlyRate: rate
+            });
+            fetchFinanceData();
+        } catch (error) {
+            console.error('Error updating resident monthly rate:', error);
         }
     };
 
@@ -186,8 +199,9 @@ const Finance = () => {
             for (let m = 0; m <= endMonth; m++) {
                 const p = (resident.monthlyPayments || []).find(pay => pay.month === m && pay.year === selectedYear);
                 const amt = p ? Number(p.amount) : 0;
-                if (amt < fees.monthlyFee) {
-                    residentPending += (fees.monthlyFee - amt);
+                const expectedRate = resident.monthlyRate || fees.monthlyFee;
+                if (amt < expectedRate) {
+                    residentPending += (expectedRate - amt);
                     isDefaulter = true;
                 }
             }
@@ -200,7 +214,7 @@ const Finance = () => {
         };
     }, { currentCollected: 0, totalPending: 0, defaulterCount: 0 });
 
-    const totalExpectedCurrentMonth = financeData.length * fees.monthlyFee;
+    const totalExpectedCurrentMonth = financeData.reduce((sum, res) => sum + (res.monthlyRate || fees.monthlyFee), 0);
     const isReadOnly = !canEditFinance || selectedYear !== currentYear;
 
     return (
@@ -278,7 +292,7 @@ const Finance = () => {
                   Gathering financial records...
                 </div>
             ) : financeData.length === 0 ? (
-                <div className="bg-white rounded-xl border border-gray-400 p-20 text-center text-gray-100 shadow-sm">
+                <div className="text-center">
                   No financial data available for this period.
                 </div>
             ) : (
@@ -297,6 +311,10 @@ const Finance = () => {
                             onHeaderClick={(idx) => setSelectedMonth(idx)}
                             selectedColumnIndex={selectedMonth}
                             onRowClick={(row) => router.push(`/finance/${row.id}`)}
+                            onMonthlyRateChange={(res, val) => {
+                                const rate = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+                                updateResidentMonthlyRate(res.id, rate);
+                            }}
                             getValue={(resident: ResidentFinance, colIdx) => {
                                 const payment = (resident.monthlyPayments || []).find(
                                     (p: any) => p.month === colIdx && p.year === selectedYear
@@ -309,19 +327,21 @@ const Finance = () => {
                                 );
                                 const currentStatus = payment ? payment.status : 0;
                                 const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
-                                const amount = nextStatus === 1 ? fees.monthlyFee : (payment?.amount || 0);
+                                const rate = res.monthlyRate || fees.monthlyFee;
+                                const amount = nextStatus === 1 ? rate : (payment?.amount || 0);
                                 updateMonthlyStatus(res.id, colIdx, nextStatus, amount);
                             }}
                             onValueChange={(res, colIdx, newValue) => {
                                 const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
-                                const status = amount >= fees.monthlyFee ? 1 : amount > 0 ? 0 : -1;
+                                const rate = res.monthlyRate || fees.monthlyFee;
+                                const status = amount >= rate ? 1 : amount > 0 ? 0 : -1;
                                 updateMonthlyStatus(res.id, colIdx, status, amount);
                             }}
                             onMonthlyFeeChange={(val) => {
                                 const num = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
                                 updateGlobalFees({ monthlyFee: num });
                             }}
-                            monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
+                            showMonthlyFeeLegend={false}
                             showYearlyFeeLegend={false}
                             minWidthClass="min-w-[1100px]"
                         />
@@ -336,28 +356,32 @@ const Finance = () => {
                             theme="blue"
                             type="numerical"
                             residents={financeData}
-                            columns={[`Fee ${selectedYear}`]}
+                            columns={yearlyColumns}
+                            showMonthlyRate={false}
                             readOnly={isReadOnly}
                             onRowClick={(row) => router.push(`/finance/${row.id}`)}
-                            getValue={(resident: ResidentFinance) => {
+                            getValue={(resident: ResidentFinance, colIdx) => {
+                                const year = parseInt(yearlyColumns[colIdx]);
                                 const payment = (resident.securityPayments || []).find(
-                                    (p: any) => p.year === selectedYear
+                                    (p: any) => p.year === year
                                 );
                                 return payment ? payment.amount.toLocaleString() : "0";
                             }}
-                            onCellClick={(res) => {
+                            onCellClick={(res, colIdx) => {
+                                const year = parseInt(yearlyColumns[colIdx]);
                                 const payment = (res.securityPayments || []).find(
-                                    (p: any) => p.year === selectedYear
+                                    (p: any) => p.year === year
                                 );
                                 const currentStatus = payment ? payment.status : 0;
                                 const nextStatus = currentStatus === 0 ? 1 : currentStatus === 1 ? -1 : 0;
                                 const amount = nextStatus === 1 ? fees.yearlyFee : (payment?.amount || 0);
-                                updateSecurityStatus(res.id, nextStatus, amount);
+                                updateSecurityStatus(res.id, year, nextStatus, amount);
                             }}
                             onValueChange={(res, colIdx, newValue) => {
+                                const year = parseInt(yearlyColumns[colIdx]);
                                 const amount = parseFloat(newValue.replace(/,/g, '')) || 0;
                                 const status = amount >= fees.yearlyFee ? 1 : amount > 0 ? 0 : -1;
-                                updateSecurityStatus(res.id, status, amount);
+                                updateSecurityStatus(res.id, year, status, amount);
                             }}
                             onYearlyFeeChange={(val) => {
                                 const num = parseFloat(val.replace(/[^0-9.]/g, '')) || 0;

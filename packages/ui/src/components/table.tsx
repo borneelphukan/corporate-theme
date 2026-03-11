@@ -9,6 +9,7 @@ export interface Resident {
   residence?: string;
   phone?: string;
   phone_no?: string;
+  monthlyRate?: number;
   designation?: string | null;
 }
 
@@ -22,6 +23,7 @@ export interface Props {
   renderCell?: (row: any, column: string, index: number) => React.ReactNode;
   onCellClick?: (row: any, columnIndex: number) => void;
   onValueChange?: (row: any, columnIndex: number, value: string) => void;
+  onMonthlyRateChange?: (row: any, value: string) => void;
   onMonthlyFeeChange?: (value: string) => void;
   onYearlyFeeChange?: (value: string) => void;
   theme: "blue" | "orange";
@@ -33,6 +35,7 @@ export interface Props {
   yearlyFee?: string;
   showMonthlyFeeLegend?: boolean;
   showYearlyFeeLegend?: boolean;
+  showMonthlyRate?: boolean;
   storageKey?: string;
   readOnly?: boolean;
   onRowClick?: (row: any) => void;
@@ -50,6 +53,7 @@ const Table = ({
   renderCell,
   onCellClick,
   onValueChange,
+  onMonthlyRateChange,
   onMonthlyFeeChange,
   onYearlyFeeChange,
   theme,
@@ -61,6 +65,7 @@ const Table = ({
   yearlyFee,
   showMonthlyFeeLegend = true,
   showYearlyFeeLegend = true,
+  showMonthlyRate = true,
   storageKey,
   readOnly = false,
   onRowClick,
@@ -147,6 +152,11 @@ const Table = ({
                       <th className="py-4 px-4 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left">
                         Phone
                       </th>
+                      {showMonthlyRate && (
+                        <th className="py-4 px-4 text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left">
+                          Monthly Rate
+                        </th>
+                      )}
                     </>
                   )}
                   {(headers || columns).map((col: string, idx: number) => {
@@ -197,6 +207,35 @@ const Table = ({
                         >
                           {row.phone_no || row.phone}
                         </td>
+                        {showMonthlyRate && (
+                          <td 
+                            className={`py-2 px-4 text-sm font-bold text-orange-600 whitespace-nowrap ${readOnly ? "" : "cursor-pointer hover:bg-orange-50"}`}
+                            onClick={() => {
+                              if (!readOnly) {
+                                setEditingCell({ resIdx: idx, colIdx: -1 });
+                                setTempValue(String(row.monthlyRate || 0));
+                              }
+                            }}
+                          >
+                            {editingCell?.resIdx === idx && editingCell?.colIdx === -1 ? (
+                               <input 
+                                  autoFocus
+                                  className="w-16 text-xs p-1 border rounded text-center outline-none focus:border-orange-500"
+                                  value={tempValue}
+                                  onChange={(e) => setTempValue(e.target.value)}
+                                  onBlur={() => {
+                                    onMonthlyRateChange?.(row, tempValue);
+                                    setEditingCell(null);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') e.currentTarget.blur();
+                                  }}
+                               />
+                            ) : (
+                              `₹ ${(row.monthlyRate || 1000).toLocaleString()}`
+                            )}
+                          </td>
+                        )}
                       </>
                     )}
                     {columns.map((col: string, colIdx: number) => {

@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ResidentService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { avatar?: string; name: string; residence: string; phone_no: string; showInWebsite?: boolean }) {
+  async create(data: { avatar?: string; name: string; residence: string; phone_no: string; monthlyRate?: number; showInWebsite?: boolean }) {
     return this.prisma.resident.create({
       data,
     });
@@ -31,15 +31,15 @@ export class ResidentService {
     return resident;
   }
 
-  async update(id: number, data: { avatar?: string; name?: string; residence?: string; phone_no?: string; showInWebsite?: boolean }) {
-    try {
-      return await this.prisma.resident.update({
-        where: { id },
-        data,
-      });
-    } catch (error) {
-       throw new NotFoundException(`Resident with ID ${id} not found`);
+  async update(id: number, data: { avatar?: string; name?: string; residence?: string; phone_no?: string; monthlyRate?: number; showInWebsite?: boolean }) {
+    const exists = await this.prisma.resident.findUnique({ where: { id } });
+    if (!exists) {
+      throw new NotFoundException(`Resident with ID ${id} not found`);
     }
+    return this.prisma.resident.update({
+      where: { id },
+      data,
+    });
   }
 
   async remove(id: number) {
