@@ -1,20 +1,28 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { FinanceService } from './finance.service';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('finance')
 export class FinanceController {
   constructor(private readonly financeService: FinanceService) {}
 
+  @Roles('president', 'treasurer')
+  @UseGuards(RolesGuard)
   @Get()
   getAllFinance() {
     return this.financeService.getAllFinance();
   }
 
+  @Roles('president', 'treasurer')
+  @UseGuards(RolesGuard)
   @Get('resident/:id')
   getResidentFinance(@Param('id', ParseIntPipe) id: number) {
     return this.financeService.getResidentFinance(id);
   }
 
+  @Roles('president', 'treasurer')
+  @UseGuards(RolesGuard)
   @Post('monthly/:id')
   updateMonthly(
     @Param('id', ParseIntPipe) id: number,
@@ -23,6 +31,8 @@ export class FinanceController {
     return this.financeService.updateMonthlyPayment(id, data);
   }
 
+  @Roles('president', 'treasurer')
+  @UseGuards(RolesGuard)
   @Post('security/:id')
   updateSecurity(
     @Param('id', ParseIntPipe) id: number,

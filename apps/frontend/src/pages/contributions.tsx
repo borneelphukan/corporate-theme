@@ -16,45 +16,59 @@ const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const securityYearsAll = years;
 
 const getStatus = (resident: any, monthIndex: number, year: string, monthlyFee: number) => {
-  const y = parseInt(year);
-
+  const targetYear = parseInt(year);
+  const rate = resident.monthlyRate || monthlyFee;
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth();
-  const isPast = y < currentYear || (y === currentYear && monthIndex < currentMonth);
-  const isCurrent = y === currentYear && monthIndex === currentMonth;
 
-  // Cumulative balance from Jan through monthIndex for this year.
-  // A positive balance means prior overpayments cover this (and future) months too.
-  let balance = 0;
-  for (let m = 0; m <= monthIndex; m++) {
-    const p = resident.monthlyPayments?.find(
-      (pay: any) => pay.month === m && pay.year === y
-    );
-    balance += (p ? Number(p.amount) : 0) - monthlyFee;
+  let surplus = 0;
+  let currentStatus = 0;
+
+  // Iterate chronologically to calculate status and carrying surplus
+  for (let y = 2023; y <= targetYear; y++) {
+    const endMonth = (y === targetYear) ? monthIndex : 11;
+    for (let m = 0; m <= endMonth; m++) {
+      const payment = resident.monthlyPayments?.find((p: any) => p.year === y && p.month === m);
+      const paid = payment ? Number(payment.amount) : 0;
+      
+      const available = surplus + paid;
+      if (available >= rate || paid >= rate) {
+        currentStatus = 1; // Green
+        surplus = Math.max(0, available - rate);
+      } else {
+        const isPast = y < currentYear || (y === currentYear && m < currentMonth);
+        const isCurrent = y === currentYear && m === currentMonth;
+        currentStatus = (isPast || isCurrent) ? -1 : 0; // Red or Gray
+        surplus = 0;
+      }
+    }
   }
-
-  if (balance >= 0) return 1;   // fully covered — green (past, current, or future)
-  if (isPast) return -1;        // past month in deficit — red
-  if (isCurrent) return 0;      // current month, not yet covered — gray
-  return 0;                     // future month, not covered — gray
+  return currentStatus;
 };
 
-const getSecurityStatus = (resident: any, year: string) => {
-  const y = parseInt(year);
-  const payment = resident.securityPayments?.find(
-    (p: any) => p.year === y
-  );
-  if (payment) return payment.status;
-
+const getSecurityStatus = (resident: any, year: string, yearlyFee: number) => {
+  const targetYear = parseInt(year);
   const now = new Date();
   const currentYear = now.getFullYear();
-  
-  if (y > currentYear) {
-    return 0; // future
+
+  let surplus = 0;
+  let currentStatus = 0;
+
+  for (let y = 2023; y <= targetYear; y++) {
+    const payment = resident.securityPayments?.find((p: any) => p.year === y);
+    const paid = payment ? Number(payment.amount) : 0;
+    
+    const available = surplus + paid;
+    if (available >= yearlyFee || paid >= yearlyFee) {
+      currentStatus = 1;
+      surplus = Math.max(0, available - yearlyFee);
+    } else {
+      currentStatus = (y <= currentYear) ? -1 : 0;
+      surplus = 0;
+    }
   }
-  
-  return 0;
+  return currentStatus;
 };
 
 const MaintenancePay = () => {
@@ -224,7 +238,7 @@ const MaintenancePay = () => {
             <Table
               residents={residents}
               columns={visibleSecurityYears}
-              getStatus={(resident, colIndex) => getSecurityStatus(resident, visibleSecurityYears[colIndex])}
+              getStatus={(resident, colIndex) => getSecurityStatus(resident, visibleSecurityYears[colIndex], fees.yearlyFee)}
               getValue={(resident, colIdx) => {
                 const year = parseInt(visibleSecurityYears[colIdx]);
                 const payment = resident.securityPayments?.find(
@@ -239,35 +253,6 @@ const MaintenancePay = () => {
               enableLock
               storageKey="contributions_yearly_lock"
             />
-
-            {/* Payment Call To Action Section */}
-            <div className="relative overflow-hidden bg-gradient-to-br from-blue-200 to-blue-100 rounded-xl p-8 md:p-12 text-center text-white shadow-2xl flex flex-col items-center justify-center border border-blue-400/30">
-              
-              {/* Background abstract circles for CTA block */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-400/20 rounded-full blur-3xl rounded-full -translate-x-1/2 translate-y-1/2"></div>
-              
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="bg-white/20 p-4 rounded-full mb-6 relative">
-                  <CreditCardOutlinedIcon className="w-10 h-10 text-white" />
-                </div>
-
-                <h3 className="text-2xl md:text-4xl font-black mb-3 drop-shadow-sm tracking-tight">
-                  Haven&apos;t paid your fees yet?
-                </h3>
-                
-                <p className="text-light md:text-lg mb-8 max-w-lg font-light">
-                  Ensure seamless services and avoid late penalties. Click below to proceed to our secure payment gateway and clear your dues instantly.
-                </p>
-
-                <Button 
-                  variant="primary"
-                  icon={{ right: <ChevronRightOutlined className="w-5 h-5 group-hover:translate-x-1 transition-transform" /> }}
-                >
-                  Pay Fees
-                </Button>
-              </div>
-            </div>
 
           </div>
         </div>

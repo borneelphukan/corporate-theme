@@ -13,11 +13,30 @@ export class ResidentService {
 
   async findAll() {
     return this.prisma.resident.findMany({
-      include: {
-        monthlyPayments: true,
-        securityPayments: true,
+      select: {
+        id: true,
+        avatar: true,
+        name: true,
+        residence: true,
+        phone_no: true,
+        showInWebsite: true,
+        monthlyRate: true,
+        monthlyPayments: {
+          select: {
+            month: true,
+            year: true,
+            amount: true,
+          }
+        },
+        securityPayments: {
+          select: {
+            year: true,
+            amount: true,
+            status: true,
+          }
+        },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { name: 'asc' },
     });
   }
 

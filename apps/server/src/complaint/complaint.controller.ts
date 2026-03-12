@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Delete, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ComplaintService } from './complaint.service';
 import { Public } from '../auth/public.decorator';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('complaints')
 export class ComplaintController {
@@ -12,11 +14,15 @@ export class ComplaintController {
     return this.complaintService.create(createComplaintDto);
   }
 
+  @Roles('president', 'secretary')
+  @UseGuards(RolesGuard)
   @Get()
   findAll() {
     return this.complaintService.findAll();
   }
 
+  @Roles('president', 'secretary')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.complaintService.remove(id);

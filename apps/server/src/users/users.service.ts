@@ -53,7 +53,7 @@ export class UsersService {
     role: string;
     password?: string;
   }) {
-    const hashedPassword = await bcrypt.hash(data.password || 'password123', 10);
+    const hashedPassword = await bcrypt.hash(data.password || process.env.DEFAULT_USER_PASSWORD || 'ChangeMe123!', 10);
     
     const user = await this.prisma.user.create({
       data: {

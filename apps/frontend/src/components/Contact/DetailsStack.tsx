@@ -9,8 +9,8 @@ const DetailsStack = () => {
           {/* First Card */}
           <ContactCard
             icon="LocationOn"
-            title="BDesign Address"
-            address="Vettersstrasse 70, Stadt Chemnitz 09126 Deutschland"
+            title="Our Address"
+            address="Legacy Apartment, F.A. Ahmad Nagar, Purnabasti, Panjabari Road, Six Mile, Guwahati, Assam - 781022"
           />
           {/* Second Card */}
           <ContactCard
@@ -22,7 +22,7 @@ const DetailsStack = () => {
           <ContactCard
             icon="Phone"
             title="Let's Talk"
-            address="Phone Number: +49 176 7125 9396 Whatsapp: +91 943500 5619"
+            address="+91 96 552 222 22"
           />
         </div>
       </div>

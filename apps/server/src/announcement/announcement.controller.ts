@@ -1,11 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { AnnouncementService } from './announcement.service';
 import { Public } from '../auth/public.decorator';
+import { Roles } from '../auth/roles.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('announcements')
 export class AnnouncementController {
   constructor(private readonly announcementService: AnnouncementService) {}
 
+  @Roles('president', 'secretary')
+  @UseGuards(RolesGuard)
   @Post()
   create(@Body() createAnnouncementDto: { title: string; description: string; date?: string }) {
     return this.announcementService.create({
@@ -26,6 +30,8 @@ export class AnnouncementController {
     return this.announcementService.findOne(id);
   }
 
+  @Roles('president', 'secretary')
+  @UseGuards(RolesGuard)
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateAnnouncementDto: { title?: string; description?: string; date?: string }) {
     return this.announcementService.update(id, {
@@ -34,6 +40,8 @@ export class AnnouncementController {
     });
   }
 
+  @Roles('president', 'secretary')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.announcementService.remove(id);

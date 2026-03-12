@@ -2,9 +2,10 @@ import React from "react";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PhoneIcon from "@mui/icons-material/Phone";
+import EmailIcon from "@mui/icons-material/Email";
 
 const ContactCard = ({ icon, title, address }) => {
-  const IconComponent = icon === "LocationOn" ? LocationOnIcon : icon === "AccessTime" ? AccessTimeIcon : PhoneIcon;
+  const IconComponent = icon === "LocationOn" ? LocationOnIcon : icon === "AccessTime" ? AccessTimeIcon : icon === "Email" ? EmailIcon : PhoneIcon;
 
   return (
     <div className="max-w-xl rounded overflow-hidden shadow-lg py-10 px-5">
