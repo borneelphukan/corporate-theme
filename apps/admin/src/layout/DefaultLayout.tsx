@@ -1,4 +1,4 @@
-import { CircularProgressBar, Loader } from "@legacy-apartment/ui";
+import { Loader } from "@legacy-apartment/ui";
 import Head from "next/head";
 import React, { useState, useEffect } from "react";
 

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Switch, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@legacy-apartment/ui';
 import { useRouter } from 'next/router';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
 import AddIcon from '@mui/icons-material/Add';
-import PaymentsIcon from '@mui/icons-material/Payments';
 import api from '@/lib/api';
 
 interface Resident {

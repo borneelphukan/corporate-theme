@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextArea, Input, Upload, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@legacy-apartment/ui';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import DescriptionIcon from '@mui/icons-material/Description';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CloseIcon from '@mui/icons-material/Close';
 import api from '@/lib/api';
 
@@ -62,7 +60,7 @@ const Documents = () => {
     if (stored) {
       try {
         const user = JSON.parse(stored);
-        setCanManage(user?.role === 'president' || user?.role === 'secretary');
+        setCanManage(user?.role === 'president' || user?.role === 'treasurer');
       } catch {}
     }
   }, []);
