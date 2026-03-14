@@ -37,6 +37,8 @@ COPY --from=builder /app/apps/server/node_modules ./apps/server/node_modules
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 COPY --from=builder /app/apps/server/package.json ./apps/server/package.json
 COPY --from=builder /app/apps/server/prisma ./apps/server/prisma
+COPY --from=builder /app/apps/server/prisma.config.ts ./apps/server/prisma.config.ts
+COPY --from=builder /app/apps/server/tsconfig.json ./apps/server/tsconfig.json
 
 ENV NODE_ENV=production
 ENV PORT=8000
