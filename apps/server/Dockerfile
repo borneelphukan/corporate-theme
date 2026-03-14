@@ -46,4 +46,4 @@ EXPOSE 8000
 
 WORKDIR /app/apps/server
 # CMD to run migrations and then start the server
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
+CMD ["sh", "-c", "npx prisma migrate deploy && pnpm run start:prod"]
