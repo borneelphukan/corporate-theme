@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ResidentService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: { avatar?: string; name: string; residence: string; phone_no: string; monthlyRate?: number; showInWebsite?: boolean }) {
+  async create(data: { avatar?: string; name: string; residence: string; phone_no: string; monthlyRate?: number }) {
     return this.prisma.resident.create({
       data,
     });
@@ -19,7 +19,6 @@ export class ResidentService {
         name: true,
         residence: true,
         phone_no: true,
-        showInWebsite: true,
         monthlyRate: true,
         monthlyPayments: {
           select: {
@@ -50,7 +49,7 @@ export class ResidentService {
     return resident;
   }
 
-  async update(id: number, data: { avatar?: string; name?: string; residence?: string; phone_no?: string; monthlyRate?: number; showInWebsite?: boolean }) {
+  async update(id: number, data: { avatar?: string; name?: string; residence?: string; phone_no?: string; monthlyRate?: number }) {
     const exists = await this.prisma.resident.findUnique({ where: { id } });
     if (!exists) {
       throw new NotFoundException(`Resident with ID ${id} not found`);

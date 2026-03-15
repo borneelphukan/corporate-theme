@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Badge, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@legacy-apartment/ui';
+import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Badge, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, Avatar, AvatarImage, AvatarFallback } from '@legacy-apartment/ui';
 import PersonIcon from '@mui/icons-material/Person';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import api from '@/lib/api';
 
 interface CommitteeMember {
@@ -229,14 +230,34 @@ const Committee = () => {
                 placeholder="Enter phone number"
               />
               <div className="md:col-span-2">
-                <Upload 
-                  label="Profile Image"
-                  value={avatarFiles}
-                  onValueChange={handleAvatarChange}
-                  maxSizeInMB={2}
-                  accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
-                  multiple={false}
-                />
+                {formData.avatar ? (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-gray-100 font-medium text-sm">Profile Image</span>
+                    <div className="relative w-max mt-1">
+                      <img src={formData.avatar} alt="Profile Preview" className="size-32 object-cover rounded-xl border border-gray-400" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, avatar: '' });
+                          setAvatarFiles([]);
+                        }}
+                        className="absolute -top-3 -right-3 bg-red-200 text-white rounded-full hover:bg-red-100 transition-colors border-1 border-white"
+                        title="Remove Image"
+                      >
+                        <RemoveIcon className="size-2" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <Upload 
+                    label="Profile Image"
+                    value={avatarFiles}
+                    onValueChange={handleAvatarChange}
+                    maxSizeInMB={2}
+                    accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                    multiple={false}
+                  />
+                )}
               </div>
             </div>
             <div className="flex gap-4">
@@ -275,9 +296,12 @@ const Committee = () => {
                   case 'member':
                     return (
                       <div className="flex items-center gap-4">
-                        <div className="size-12 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center border border-gray-400">
-                          {member.avatar ? <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" /> : <PersonIcon className="text-gray-400" />}
-                        </div>
+                        <Avatar className="size-12 border border-gray-400">
+                          <AvatarImage src={member.avatar || undefined} alt={member.name} />
+                          <AvatarFallback className="bg-gray-300">
+                            <PersonIcon className="text-gray-400" />
+                          </AvatarFallback>
+                        </Avatar>
                         <span className="font-bold text-gray-900">{member.name}</span>
                       </div>
                     );

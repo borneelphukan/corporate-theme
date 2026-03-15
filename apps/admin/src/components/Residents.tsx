@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Switch, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@legacy-apartment/ui';
+import { Button, Input, Upload, Table, Switch, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, Avatar, AvatarImage, AvatarFallback } from '@legacy-apartment/ui';
 import { useRouter } from 'next/router';
 import PersonIcon from '@mui/icons-material/Person';
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import api from '@/lib/api';
 
 interface Resident {
@@ -12,7 +13,6 @@ interface Resident {
   residence: string;
   phone_no: string;
   monthlyRate: number;
-  showInWebsite: boolean;
 }
 
 
@@ -26,7 +26,6 @@ const Residents = () => {
     phone_no: '',
     monthlyRate: 1000,
     avatar: '',
-    showInWebsite: false,
   });
   const [loading, setLoading] = useState(true);
   const [avatarFiles, setAvatarFiles] = useState<File[]>([]);
@@ -100,7 +99,7 @@ const Residents = () => {
       setIsFormOpen(false);
       setEditingId(null);
       setAvatarFiles([]);
-      setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '', showInWebsite: false });
+      setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '' });
       fetchResidents();
     } catch (error: any) {
       setAlertDialog({
@@ -120,7 +119,6 @@ const Residents = () => {
       phone_no: res.phone_no,
       monthlyRate: res.monthlyRate || 1000,
       avatar: res.avatar || '',
-      showInWebsite: res.showInWebsite || false,
     });
     setAvatarFiles([]); // Reset file input when editing (keeps existing URL if not changed)
     setIsFormOpen(true);
@@ -164,7 +162,7 @@ const Residents = () => {
               icon={{ left: <AddIcon className="size-5" /> }}
               onClick={() => {
                   setEditingId(null);
-                  setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '', showInWebsite: false });
+                  setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '' });
                   setAvatarFiles([]);
                   setIsFormOpen(true);
               }}
@@ -215,25 +213,36 @@ const Residents = () => {
                 onChange={(e) => setFormData({...formData, monthlyRate: parseFloat(e.target.value) || 0})}
                 placeholder="Enter monthly rate"
               />
-              <div className="flex flex-col justify-center px-4 py-3">
-                <Switch
-                  id="showInWebsite"
-                  label="Show in Website"
-                  hint="Publicly show this name on the frontend website."
-                  checked={formData.showInWebsite}
-                  onChange={(checked) => setFormData({...formData, showInWebsite: checked})}
-                />
-              </div>
               <div className="md:col-span-2">
-                <Upload 
-                  label="Profile Image"
-                  value={avatarFiles}
-                  onValueChange={handleAvatarChange}
-                  maxSizeInMB={2}
-                  accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
-                  multiple={false}
-                  hint="PNG, JPG, or JPEG up to 2MB. This image will represent the resident across the dashboard."
-                />
+                {formData.avatar ? (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-gray-100 font-medium text-sm">Profile Image</span>
+                    <div className="relative w-max mt-1">
+                      <img src={formData.avatar} alt="Profile Preview" className="size-32 object-cover rounded-xl border border-gray-400" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, avatar: '' });
+                          setAvatarFiles([]);
+                        }}
+                        className="absolute -top-3 -right-3 bg-red-200 text-white rounded-full hover:bg-red-100 transition-colors border-1 border-white"
+                        title="Remove Image"
+                      >
+                        <RemoveIcon className="size-5" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <Upload 
+                    label="Profile Image"
+                    value={avatarFiles}
+                    onValueChange={handleAvatarChange}
+                    maxSizeInMB={2}
+                    accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                    multiple={false}
+                    hint="PNG, JPG, or JPEG up to 2MB. This image will represent the resident across the dashboard."
+                  />
+                )}
               </div>
             </div>
             <div className="flex gap-4">
@@ -276,13 +285,12 @@ const Residents = () => {
                   case 'resident':
                     return (
                       <div className="flex items-center gap-4">
-                        <div className="size-12 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center border border-gray-400 shrink-0">
-                          {res.avatar ? (
-                              <img src={res.avatar} alt={res.name} className="w-full h-full object-cover" />
-                          ) : (
-                              <PersonIcon className="text-gray-400" />
-                          )}
-                        </div>
+                        <Avatar className="size-12 border border-gray-400 shrink-0">
+                          <AvatarImage src={res.avatar || undefined} alt={res.name} />
+                          <AvatarFallback className="bg-gray-300">
+                            <PersonIcon className="text-gray-400" />
+                          </AvatarFallback>
+                        </Avatar>
                         <span className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{res.name}</span>
                       </div>
                     );

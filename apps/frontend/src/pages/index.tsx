@@ -63,7 +63,7 @@ const Home = () => {
       try {
         const response = await api.get('/residents');
         const data = Array.isArray(response.data) ? response.data : [];
-        setResidents(data.filter((res: any) => res.showInWebsite));
+        setResidents(data);
       } catch (error) {
         console.error('Error fetching residents:', error);
       }
