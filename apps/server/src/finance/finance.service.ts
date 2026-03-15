@@ -98,15 +98,21 @@ export class FinanceService {
     });
   }
 
-  async getAllFinance() {
+  async getAllFinance(sortBy?: string, sortOrder?: 'asc' | 'desc') {
+    let orderBy: any = { name: 'asc' };
+    
+    if (sortBy && sortOrder) {
+      if (['name', 'residence', 'phone_no', 'monthlyRate'].includes(sortBy)) {
+        orderBy = { [sortBy]: sortOrder };
+      }
+    }
+
     return this.prisma.resident.findMany({
       include: {
         monthlyPayments: true,
         securityPayments: true,
       },
-      orderBy: {
-        name: 'asc',
-      },
+      orderBy,
     });
   }
 }

@@ -77,19 +77,28 @@ const MaintenancePay = () => {
   const [residents, setResidents] = useState<any[]>([]);
   const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
   const [globalPassword, setGlobalPassword] = useState("");
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | ''>('');
 
   React.useEffect(() => {
     fetchSettings();
+  }, []);
+
+  React.useEffect(() => {
     const fetchResidents = async () => {
       try {
-        const response = await api.get('/residents');
+        const params = new URLSearchParams();
+        if (sortColumn) params.append('sortBy', sortColumn);
+        if (sortOrder) params.append('sortOrder', sortOrder);
+
+        const response = await api.get(`/residents?${params.toString()}`);
         setResidents(response.data);
       } catch (error) {
         console.error('Error fetching residents:', error);
       }
     };
     fetchResidents();
-  }, []);
+  }, [sortColumn, sortOrder]);
 
   const fetchSettings = async () => {
     try {
@@ -188,6 +197,20 @@ const MaintenancePay = () => {
               monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
               theme="blue"
               minWidthClass="min-w-[1000px]"
+              sortColumn={sortColumn}
+              sortOrder={sortOrder}
+              onSortChange={(col) => {
+                  if (sortColumn === col) {
+                      if (sortOrder === 'asc') setSortOrder('desc');
+                      else if (sortOrder === 'desc') {
+                          setSortOrder('');
+                          setSortColumn('');
+                      }
+                  } else {
+                      setSortColumn(col);
+                      setSortOrder('asc');
+                  }
+              }}
               enableLock
               storageKey="contributions_monthly_lock"
               expectedPassword={globalPassword}
@@ -255,6 +278,20 @@ const MaintenancePay = () => {
               theme="orange"
               minWidthClass="min-w-[800px]"
               className="mb-20"
+              sortColumn={sortColumn}
+              sortOrder={sortOrder}
+              onSortChange={(col) => {
+                  if (sortColumn === col) {
+                      if (sortOrder === 'asc') setSortOrder('desc');
+                      else if (sortOrder === 'desc') {
+                          setSortOrder('');
+                          setSortColumn('');
+                      }
+                  } else {
+                      setSortColumn(col);
+                      setSortOrder('asc');
+                  }
+              }}
               enableLock
               storageKey="contributions_yearly_lock"
               expectedPassword={globalPassword}

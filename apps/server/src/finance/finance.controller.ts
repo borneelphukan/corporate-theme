@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { FinanceService } from './finance.service';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
@@ -10,8 +10,11 @@ export class FinanceController {
   @Roles('president', 'treasurer')
   @UseGuards(RolesGuard)
   @Get()
-  getAllFinance() {
-    return this.financeService.getAllFinance();
+  getAllFinance(
+    @Query('sortBy') sortBy?: string, 
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc'
+  ) {
+    return this.financeService.getAllFinance(sortBy, sortOrder);
   }
 
   @Roles('president', 'treasurer')

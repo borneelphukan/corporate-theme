@@ -58,6 +58,8 @@ const Finance = () => {
     const [selectedMonth, setSelectedMonth] = useState(currentMonthIdx);
     const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
     const [canEditFinance, setCanEditFinance] = useState(false);
+    const [sortColumn, setSortColumn] = useState('');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | ''>('');
     const yearlyColumns = ['2023', '2024', '2025', '2026', '2027'];
 
     useEffect(() => {
@@ -78,7 +80,7 @@ const Finance = () => {
     useEffect(() => {
         fetchFinanceData();
         fetchSettings();
-    }, [selectedYear]);
+    }, [selectedYear, sortColumn, sortOrder]);
 
     const fetchSettings = async () => {
         try {
@@ -97,7 +99,11 @@ const Finance = () => {
 
     const fetchFinanceData = async () => {
         try {
-            const response = await api.get('/finance');
+            const params = new URLSearchParams();
+            if (sortColumn) params.append('sortBy', sortColumn);
+            if (sortOrder) params.append('sortOrder', sortOrder);
+
+            const response = await api.get(`/finance?${params.toString()}`);
             setFinanceData(response.data);
         } catch (error) {
             console.error('Error fetching finance data:', error);
@@ -328,6 +334,20 @@ const Finance = () => {
                             residents={financeData}
                             columns={months}
                             readOnly={isReadOnly}
+                            sortColumn={sortColumn}
+                            sortOrder={sortOrder}
+                            onSortChange={(col) => {
+                                if (sortColumn === col) {
+                                   if (sortOrder === 'asc') setSortOrder('desc');
+                                   else if (sortOrder === 'desc') {
+                                     setSortOrder('');
+                                     setSortColumn('');
+                                   }
+                                } else {
+                                   setSortColumn(col);
+                                   setSortOrder('asc');
+                                }
+                            }}
                             onHeaderClick={(idx) => setSelectedMonth(idx)}
                             selectedColumnIndex={selectedMonth}
                             onRowClick={(row) => router.push(`/finance/${row.id}`)}
@@ -384,6 +404,20 @@ const Finance = () => {
                             columns={yearlyColumns}
                             showMonthlyRate={false}
                             readOnly={isReadOnly}
+                            sortColumn={sortColumn}
+                            sortOrder={sortOrder}
+                            onSortChange={(col) => {
+                                if (sortColumn === col) {
+                                   if (sortOrder === 'asc') setSortOrder('desc');
+                                   else if (sortOrder === 'desc') {
+                                     setSortOrder('');
+                                     setSortColumn('');
+                                   }
+                                } else {
+                                   setSortColumn(col);
+                                   setSortOrder('asc');
+                                }
+                            }}
                             onRowClick={(row) => router.push(`/finance/${row.id}`)}
                             getValue={(resident: ResidentFinance, colIdx) => {
                                 const year = parseInt(yearlyColumns[colIdx]);

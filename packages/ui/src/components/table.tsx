@@ -182,20 +182,31 @@ const Table = ({
                 <tr>
                   {type !== "general" && (
                     <>
-                      <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4 md:px-6'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                        Resident
-                      </th>
-                      <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                        Apartment
-                      </th>
-                      <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                        Phone
-                      </th>
-                      {showMonthlyRate && (
-                        <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                          Monthly Rate
-                        </th>
-                      )}
+                      {[
+                        { label: 'Resident', key: 'name' },
+                        { label: 'Apartment', key: 'residence' },
+                        { label: 'Phone', key: 'phone_no' },
+                        ...(showMonthlyRate ? [{ label: 'Monthly Rate', key: 'monthlyRate' }] : [])
+                      ].map((col) => {
+                        const isSorted = sortColumn === col.key;
+                        const isSortable = !!onSortChange;
+                        return (
+                          <th 
+                            key={col.key}
+                            className={`${tight ? 'py-2 px-2' : `py-4 px-4 ${col.key === 'name' ? 'md:px-6' : ''}`} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left ${isSortable ? "cursor-pointer hover:bg-gray-500" : ""}`}
+                            onClick={() => { if (isSortable) onSortChange(col.key); }}
+                          >
+                            <div className="flex items-center justify-between w-full h-full">
+                              {col.label}
+                              {isSorted && sortOrder !== "" && (
+                                <span className="flex items-center transition-colors text-orange-500">
+                                  {sortOrder === 'desc' ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+                                </span>
+                              )}
+                            </div>
+                          </th>
+                        );
+                      })}
                     </>
                   )}
                   {(headers || columns).map((col: string, idx: number) => {
