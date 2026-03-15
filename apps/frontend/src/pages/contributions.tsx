@@ -2,12 +2,7 @@
 import React, { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import { Breadcrumb, Banner, Button, Table } from "@legacy-apartment/ui";
-import CreditCardOutlinedIcon from "@mui/icons-material/CreditCardOutlined";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { ChevronRightOutlined } from "@mui/icons-material";
+import { Breadcrumb, Banner, Button, Table, Icon } from "@legacy-apartment/ui";
 import api from "@/lib/api";
 
 const currentYear = new Date().getFullYear();
@@ -76,19 +71,29 @@ const MaintenancePay = () => {
   const [securityStartIdx, setSecurityStartIdx] = useState<number>(Math.max(0, securityYearsAll.length - 4));
   const [residents, setResidents] = useState<any[]>([]);
   const [fees, setFees] = useState({ monthlyFee: 1000, yearlyFee: 5000 });
+  const [globalPassword, setGlobalPassword] = useState("");
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | ''>('');
 
   React.useEffect(() => {
     fetchSettings();
+  }, []);
+
+  React.useEffect(() => {
     const fetchResidents = async () => {
       try {
-        const response = await api.get('/residents');
+        const params = new URLSearchParams();
+        if (sortColumn) params.append('sortBy', sortColumn);
+        if (sortOrder) params.append('sortOrder', sortOrder);
+
+        const response = await api.get(`/residents?${params.toString()}`);
         setResidents(response.data);
       } catch (error) {
         console.error('Error fetching residents:', error);
       }
     };
     fetchResidents();
-  }, []);
+  }, [sortColumn, sortOrder]);
 
   const fetchSettings = async () => {
     try {
@@ -99,6 +104,9 @@ const MaintenancePay = () => {
           monthlyFee: data.monthlyFee,
           yearlyFee: data.yearlyFee,
         });
+        if (data.frontendPassword) {
+          setGlobalPassword(data.frontendPassword);
+        }
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -151,7 +159,7 @@ const MaintenancePay = () => {
                   }`}
                   disabled={years.indexOf(selectedYear) === 0}
                 >
-                  <KeyboardArrowLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
+                  <Icon type="keyboard_arrow_left" className="text-[24px]" />
                 </button>
                 <div className="text-xl md:text-2xl font-extrabold text-orange-500 min-w-[80px] text-center">{selectedYear}</div>
                 <button 
@@ -166,7 +174,7 @@ const MaintenancePay = () => {
                   }`}
                   disabled={years.indexOf(selectedYear) === years.length - 1}
                 >
-                  <KeyboardArrowRightIcon className="w-5 h-5 md:w-6 md:h-6" />
+                  <Icon type="keyboard_arrow_right" className="text-[24px]" />
                 </button>
               </div>
             </div>
@@ -184,8 +192,23 @@ const MaintenancePay = () => {
               monthlyFee={`₹ ${fees.monthlyFee.toLocaleString()}`}
               theme="blue"
               minWidthClass="min-w-[1000px]"
+              sortColumn={sortColumn}
+              sortOrder={sortOrder}
+              onSortChange={(col) => {
+                  if (sortColumn === col) {
+                      if (sortOrder === 'asc') setSortOrder('desc');
+                      else if (sortOrder === 'desc') {
+                          setSortOrder('');
+                          setSortColumn('');
+                      }
+                  } else {
+                      setSortColumn(col);
+                      setSortOrder('asc');
+                  }
+              }}
               enableLock
               storageKey="contributions_monthly_lock"
+              expectedPassword={globalPassword}
             />
 
             {/* Annual security fee section */}
@@ -213,7 +236,7 @@ const MaintenancePay = () => {
                     }`}
                     disabled={securityStartIdx === 0}
                   >
-                    <KeyboardArrowLeftIcon className="w-5 h-5 md:w-6 md:h-6" />
+                    <Icon type="keyboard_arrow_left" className="text-[24px]" />
                   </button>
                   <div className="text-xl md:text-2xl font-extrabold text-orange-500 min-w-[140px] text-center">
                     {visibleSecurityYears[0]} - {visibleSecurityYears[visibleSecurityYears.length - 1]}
@@ -229,7 +252,7 @@ const MaintenancePay = () => {
                     }`}
                     disabled={securityStartIdx >= securityYearsAll.length - 4}
                   >
-                    <KeyboardArrowRightIcon className="w-5 h-5 md:w-6 md:h-6" />
+                    <Icon type="keyboard_arrow_right" className="text-[24px]" />
                   </button>
                 </div>
               )}
@@ -250,8 +273,23 @@ const MaintenancePay = () => {
               theme="orange"
               minWidthClass="min-w-[800px]"
               className="mb-20"
+              sortColumn={sortColumn}
+              sortOrder={sortOrder}
+              onSortChange={(col) => {
+                  if (sortColumn === col) {
+                      if (sortOrder === 'asc') setSortOrder('desc');
+                      else if (sortOrder === 'desc') {
+                          setSortOrder('');
+                          setSortColumn('');
+                      }
+                  } else {
+                      setSortColumn(col);
+                      setSortOrder('asc');
+                  }
+              }}
               enableLock
               storageKey="contributions_yearly_lock"
+              expectedPassword={globalPassword}
             />
 
           </div>

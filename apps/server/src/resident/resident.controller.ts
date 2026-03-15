@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { ResidentService } from './resident.service';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -11,14 +11,18 @@ export class ResidentController {
   @Post()
   @Roles('president')
   @UseGuards(RolesGuard)
-  create(@Body() createResidentDto: { avatar?: string; name: string; residence: string; phone_no: string; monthlyRate?: number; showInWebsite?: boolean }) {
+  create(@Body() createResidentDto: { avatar?: string; name: string; residence: string; phone_no: string; monthlyRate?: number }) {
     return this.residentService.create(createResidentDto);
   }
 
   @Public()
   @Get()
-  findAll() {
-    return this.residentService.findAll();
+  findAll(
+    @Query('search') search?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+  ) {
+    return this.residentService.findAll(search, sortBy, sortOrder);
   }
 
   @Public()
@@ -30,7 +34,7 @@ export class ResidentController {
   @Patch(':id')
   @Roles('president', 'treasurer')
   @UseGuards(RolesGuard)
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateResidentDto: { avatar?: string; name?: string; residence?: string; phone_no?: string; monthlyRate?: number; showInWebsite?: boolean }) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateResidentDto: { avatar?: string; name?: string; residence?: string; phone_no?: string; monthlyRate?: number }) {
     return this.residentService.update(id, updateResidentDto);
   }
 

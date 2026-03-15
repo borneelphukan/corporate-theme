@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "./input";
 import Button from "./button";
-import LockIcon from '@mui/icons-material/Lock';
 import { StatusLight } from "./statusLight";
+import { Icon } from './icon';
 
 export interface Resident {
   name: string;
@@ -38,6 +38,7 @@ export interface Props {
   showYearlyFeeLegend?: boolean;
   showMonthlyRate?: boolean;
   storageKey?: string;
+  expectedPassword?: string;
   readOnly?: boolean;
   onRowClick?: (row: any) => void;
   onHeaderClick?: (columnIndex: number) => void;
@@ -45,6 +46,12 @@ export interface Props {
   tight?: boolean;
   getRowClass?: (row: any) => string;
   getCellClass?: (row: any, columnIndex: number) => string;
+  sortColumn?: string;
+  sortOrder?: "asc" | "desc" | "";
+  onSortChange?: (column: string) => void;
+  search?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
 }
 
 const Table = ({
@@ -71,6 +78,7 @@ const Table = ({
   showYearlyFeeLegend = true,
   showMonthlyRate = true,
   storageKey,
+  expectedPassword = "",
   readOnly = false,
   onRowClick,
   onHeaderClick,
@@ -78,6 +86,12 @@ const Table = ({
   tight = false,
   getRowClass,
   getCellClass,
+  sortColumn,
+  sortOrder,
+  onSortChange,
+  search,
+  onSearchChange,
+  searchPlaceholder = "Search...",
 }: Props) => {
   const [isUnlocked, setIsUnlocked] = useState(!enableLock);
   const [password, setPassword] = useState("");
@@ -101,7 +115,7 @@ const Table = ({
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "legacy6mile") {
+    if (password === expectedPassword) {
       setIsUnlocked(true);
       if (storageKey) {
         localStorage.setItem(storageKey, "true");
@@ -119,7 +133,7 @@ const Table = ({
       {!isUnlocked ? (
         <div className="flex flex-col items-center justify-center p-12 md:p-24 bg-slate-50/50 min-h-[400px]">
           <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-6 text-grey-100 border border-gray-400">
-             <LockIcon className="size-8" />
+             <Icon type="lock" className="text-[32px]" />
           </div>
           <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">Restricted Access</h3>
           <p className="text-grey-100 mb-8 text-center max-w-sm">Please enter the password to view the contributions data.</p>
@@ -144,26 +158,52 @@ const Table = ({
         </div>
       ) : (
         <>
+          {onSearchChange && (
+            <div className="p-2 border-b border-gray-400 bg-white w-full">
+              <div className="w-full md:w-1/3">
+                <Input 
+                  id="table-search"
+                  label="Search"
+                  hideLabel
+                  placeholder={searchPlaceholder}
+                  value={search || ""}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  icon={{ left: <Icon type="search" className="text-[20px]" /> as any }}
+                />
+              </div>
+            </div>
+          )}
           <div className="overflow-x-auto max-h-[800px] custom-scrollbar">
             <table className={`w-full text-left border-collapse ${minWidthClass}`}>
               <thead className="top-0 z-10 bg-slate-50 border-b border-gray-400">
                 <tr>
                   {type !== "general" && (
                     <>
-                      <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4 md:px-6'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                        Resident
-                      </th>
-                      <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                        Apartment
-                      </th>
-                      <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                        Phone
-                      </th>
-                      {showMonthlyRate && (
-                        <th className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left`}>
-                          Monthly Rate
-                        </th>
-                      )}
+                      {[
+                        { label: 'Resident', key: 'name' },
+                        { label: 'Apartment', key: 'residence' },
+                        { label: 'Phone', key: 'phone_no' },
+                        ...(showMonthlyRate ? [{ label: 'Monthly Rate', key: 'monthlyRate' }] : [])
+                      ].map((col) => {
+                        const isSorted = sortColumn === col.key;
+                        const isSortable = !!onSortChange;
+                        return (
+                          <th 
+                            key={col.key}
+                            className={`${tight ? 'py-2 px-2' : `py-4 px-4 ${col.key === 'name' ? 'md:px-6' : ''}`} text-xs text-gray-100 uppercase tracking-tighter font-black bg-slate-50 text-left ${isSortable ? "cursor-pointer hover:bg-gray-500" : ""}`}
+                            onClick={() => { if (isSortable) onSortChange(col.key); }}
+                          >
+                            <div className="flex items-center justify-between w-full h-full">
+                              {col.label}
+                              {isSorted && sortOrder !== "" && (
+                                <span className="flex items-center transition-colors text-orange-500">
+                                  {sortOrder === 'desc' ? <Icon type="keyboard_arrow_down" className="text-[20px]" /> : <Icon type="keyboard_arrow_up" className="text-[20px]" />}
+                                </span>
+                              )}
+                            </div>
+                          </th>
+                        );
+                      })}
                     </>
                   )}
                   {(headers || columns).map((col: string, idx: number) => {
@@ -171,16 +211,30 @@ const Table = ({
                     const headerHighlight = isSelected 
                       ? (theme === 'orange' ? 'bg-orange-100/50 text-orange-600' : 'bg-blue-100/50 text-blue-600')
                       : 'bg-slate-50 text-gray-100';
+                    
+                    const columnKey = columns[idx];
+                    const isSortable = !!onSortChange && type === 'general';
+                    const isSorted = sortColumn === columnKey;
 
                     return (
                       <th 
                         key={idx} 
-                        className={`${tight ? 'py-2 px-2' : 'py-4 px-4'} text-xs uppercase tracking-tighter font-black transition-colors ${headerHighlight} ${
+                        className={`p-3 text-xs uppercase tracking-tighter font-black transition-colors ${headerHighlight} ${
                           type === 'general' ? 'text-left' : 'text-center'
-                        } ${onHeaderClick ? "cursor-pointer hover:bg-gray-400" : ""}`}
-                        onClick={() => onHeaderClick?.(idx)}
+                        } ${(onHeaderClick || isSortable) ? "cursor-pointer hover:bg-gray-500" : ""}`}
+                        onClick={() => {
+                           if (isSortable) onSortChange(columnKey);
+                           else onHeaderClick?.(idx);
+                        }}
                       >
-                        {col}
+                        <div className="flex items-center justify-between w-full">
+                          {col}
+                          {isSorted && sortOrder !== "" && (
+                            <span className="flex items-center transition-colors text-orange-500">
+                              {sortOrder === 'desc' ? <Icon type="keyboard_arrow_down" className="text-[20px]" /> : <Icon type="keyboard_arrow_up" className="text-[20px]" />}
+                            </span>
+                          )}
+                        </div>
                       </th>
                     );
                   })}

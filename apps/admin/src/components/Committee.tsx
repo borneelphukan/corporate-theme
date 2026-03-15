@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Badge, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@legacy-apartment/ui';
-import PersonIcon from '@mui/icons-material/Person';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import AddIcon from '@mui/icons-material/Add';
+import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Badge, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, Avatar, AvatarImage, AvatarFallback, Icon } from '@legacy-apartment/ui';
 import api from '@/lib/api';
 
 interface CommitteeMember {
@@ -30,6 +27,10 @@ const roles = [
 
 const Committee = () => {
   const [members, setMembers] = useState<CommitteeMember[]>([]);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | ''>('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -65,11 +66,22 @@ const Committee = () => {
       } catch {}
     }
     fetchMembers();
-  }, []);
+  }, [debouncedSearch, sortColumn, sortOrder]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(handler);
+  }, [search]);
 
   const fetchMembers = async () => {
     try {
-      const response = await api.get('/committee');
+      const backendSortBy = sortColumn === 'member' ? 'name' : sortColumn;
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append('search', debouncedSearch);
+      if (backendSortBy) params.append('sortBy', backendSortBy);
+      if (sortOrder) params.append('sortOrder', sortOrder);
+
+      const response = await api.get(`/committee?${params.toString()}`);
       setMembers(response.data);
     } catch (error) {
       console.error('Error fetching committee members:', error);
@@ -162,7 +174,7 @@ const Committee = () => {
         {isPresident && (
           <Button 
             variant="primary"
-            icon={{ left: <AddIcon className="size-5" /> }}
+            icon={{ left: <Icon type="add" className="text-[20px]" /> }}
             onClick={() => {
                 setEditingId(null);
                 setFormData({ name: '', residence: '', phone_no: '', avatar: '', role: roles[0] });
@@ -194,7 +206,7 @@ const Committee = () => {
                   <DropdownMenuTrigger asChild>
                     <button type="button" className="w-full py-2 px-3 border border-gray-400 rounded-lg bg-white flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-orange-500">
                       <span className="text-sm text-gray-900">{formData.role}</span>
-                      <KeyboardArrowDownIcon className="text-gray-400 size-5" />
+                      <Icon type="keyboard_arrow_down" className="text-gray-400 text-[20px]" />
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-[calc(100vw-3rem)] md:w-[440px]">
@@ -229,14 +241,34 @@ const Committee = () => {
                 placeholder="Enter phone number"
               />
               <div className="md:col-span-2">
-                <Upload 
-                  label="Profile Image"
-                  value={avatarFiles}
-                  onValueChange={handleAvatarChange}
-                  maxSizeInMB={2}
-                  accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
-                  multiple={false}
-                />
+                {formData.avatar ? (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-gray-100 font-medium text-sm">Profile Image</span>
+                    <div className="relative w-max mt-1">
+                      <img src={formData.avatar} alt="Profile Preview" className="size-32 object-cover rounded-xl border border-gray-400" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, avatar: '' });
+                          setAvatarFiles([]);
+                        }}
+                        className="absolute -top-3 -right-3 bg-red-200 text-white rounded-full hover:bg-red-100 transition-colors border-1 border-white"
+                        title="Remove Image"
+                      >
+                        <Icon type="remove" className="text-[8px]" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <Upload 
+                    label="Profile Image"
+                    value={avatarFiles}
+                    onValueChange={handleAvatarChange}
+                    maxSizeInMB={2}
+                    accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                    multiple={false}
+                  />
+                )}
               </div>
             </div>
             <div className="flex gap-4">
@@ -263,10 +295,28 @@ const Committee = () => {
         ) : (
             <Table 
               data={editingId && isFormOpen ? members.filter(m => m.id !== editingId) : members}
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder="Search committee..."
               type="general"
               theme="orange"
               columns={['member', 'role', 'residence', 'phone_no', 'actions']}
               headers={['Member', 'Role', 'Apartment', 'Phone', 'Actions']}
+              sortColumn={sortColumn}
+              sortOrder={sortOrder}
+              onSortChange={(col) => {
+                if (col === 'actions') return;
+                if (sortColumn === col) {
+                   if (sortOrder === 'asc') setSortOrder('desc');
+                   else if (sortOrder === 'desc') {
+                     setSortOrder('');
+                     setSortColumn('');
+                   }
+                } else {
+                   setSortColumn(col);
+                   setSortOrder('asc');
+                }
+              }}
               minWidthClass="min-w-[800px]"
               showMonthlyFeeLegend={false}
               showYearlyFeeLegend={false}
@@ -275,9 +325,12 @@ const Committee = () => {
                   case 'member':
                     return (
                       <div className="flex items-center gap-4">
-                        <div className="size-12 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center border border-gray-400">
-                          {member.avatar ? <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" /> : <PersonIcon className="text-gray-400" />}
-                        </div>
+                        <Avatar className="size-12 border border-gray-400">
+                          <AvatarImage src={member.avatar || undefined} alt={member.name} />
+                          <AvatarFallback className="bg-gray-300">
+                            <Icon type="person" className="text-gray-400" />
+                          </AvatarFallback>
+                        </Avatar>
                         <span className="font-bold text-gray-900">{member.name}</span>
                       </div>
                     );

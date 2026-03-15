@@ -1,12 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import Head from "next/head";
-import { Banner, Breadcrumb, Button, Input, TextArea } from "@legacy-apartment/ui";
-import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
-import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { ChevronLeftOutlined, ChevronRightOutlined } from "@mui/icons-material";
+import { Banner, Breadcrumb, Button, Input, TextArea, Icon } from "@legacy-apartment/ui";
 import api from "@/lib/api";
 
 
@@ -19,6 +15,38 @@ const HelpDesk = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [globalPassword, setGlobalPassword] = useState("");
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await api.get('/setting');
+        if (response.data && response.data.frontendPassword) {
+          setGlobalPassword(response.data.frontendPassword);
+        }
+      } catch (e) {}
+    };
+    fetchSettings();
+
+    const saved = localStorage.getItem("helpdesk_lock");
+    if (saved === "true") {
+      setIsUnlocked(true);
+    }
+  }, []);
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === globalPassword) {
+      setIsUnlocked(true);
+      localStorage.setItem("helpdesk_lock", "true");
+      setError("");
+    } else {
+      setError("Incorrect password");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,12 +99,39 @@ const HelpDesk = () => {
             </div>
 
             <div className="bg-white rounded-3xl border border-gray-400 shadow-xl overflow-hidden shadow-orange-500/5">
-              <div className="grid grid-cols-1 md:grid-cols-5">
+              {!isUnlocked ? (
+                <div className="flex flex-col items-center justify-center p-12 md:p-24 bg-slate-50/50 min-h-[400px]">
+                  <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mb-6 border border-gray-400">
+                    <Icon type="lock" className="text-[32px]" />
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">Restricted Access</h3>
+                  <p className="mb-8 text-center max-w-sm">Please enter the password to submit a complaint or support ticket.</p>
+                  <form onSubmit={handleUnlock} className="flex flex-col items-center w-full max-w-sm gap-4">
+                    <Input 
+                      id="unlock-password"
+                      label="Password"
+                      hideLabel
+                      type="password" 
+                      value={password}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                      placeholder="Enter password"
+                      error={error}
+                    />
+                    <Button 
+                      type="submit"
+                      variant="primary"
+                    >
+                      Unlock
+                    </Button>
+                  </form>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-5">
                 {/* Info Sidebar */}
                 <div className="md:col-span-2 bg-orange-500 p-8 md:p-12 text-white flex flex-col justify-between">
                   <div>
                     <div className="bg-white/20 w-16 h-16 rounded-2xl flex items-center justify-center mb-8">
-                      <SupportAgentOutlinedIcon className="w-10 h-10 text-white" />
+                      <Icon type="support_agent" className="text-[40px] text-white" />
                     </div>
                     <h3 className="text-2xl font-bold mb-4">Contact Info</h3>
                     <p className="text-orange-50/80 mb-8 leading-relaxed">
@@ -106,7 +161,7 @@ const HelpDesk = () => {
                   {submitted ? (
                     <div className="h-full flex flex-col items-center justify-center text-center py-12">
                       <div className="w-20 h-20 bg-green-300 rounded-full flex items-center justify-center mb-6 text-green-200">
-                        <CheckCircleOutlineIcon className="w-12 h-12" />
+                        <Icon type="check_circle" className="text-[48px]" />
                       </div>
                       <h3 className="text-2xl font-bold mb-2">Complaint Received</h3>
                       <p className="mb-8">
@@ -162,6 +217,7 @@ const HelpDesk = () => {
                   )}
                 </div>
               </div>
+              )}
             </div>
           </div>
         </div>

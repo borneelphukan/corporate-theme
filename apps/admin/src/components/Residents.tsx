@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Upload, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, Table, Switch, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@legacy-apartment/ui';
+import { Button, Input, Upload, Table, Switch, Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, Avatar, AvatarImage, AvatarFallback, Icon } from '@legacy-apartment/ui';
 import { useRouter } from 'next/router';
-import PersonIcon from '@mui/icons-material/Person';
-import AddIcon from '@mui/icons-material/Add';
 import api from '@/lib/api';
 
 interface Resident {
@@ -12,12 +10,15 @@ interface Resident {
   residence: string;
   phone_no: string;
   monthlyRate: number;
-  showInWebsite: boolean;
 }
 
 
 const Residents = () => {
   const [residents, setResidents] = useState<Resident[]>([]);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | ''>('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
@@ -26,7 +27,6 @@ const Residents = () => {
     phone_no: '',
     monthlyRate: 1000,
     avatar: '',
-    showInWebsite: false,
   });
   const [loading, setLoading] = useState(true);
   const [avatarFiles, setAvatarFiles] = useState<File[]>([]);
@@ -57,12 +57,25 @@ const Residents = () => {
   }, []);
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
     fetchResidents();
-  }, []);
+  }, [debouncedSearch, sortColumn, sortOrder]);
 
   const fetchResidents = async () => {
     try {
-      const response = await api.get('/residents');
+      const backendSortBy = sortColumn === 'resident' ? 'name' : sortColumn;
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append('search', debouncedSearch);
+      if (backendSortBy) params.append('sortBy', backendSortBy);
+      if (sortOrder) params.append('sortOrder', sortOrder);
+
+      const response = await api.get(`/residents?${params.toString()}`);
       setResidents(response.data);
     } catch (error) {
       console.error('Error fetching residents:', error);
@@ -100,7 +113,7 @@ const Residents = () => {
       setIsFormOpen(false);
       setEditingId(null);
       setAvatarFiles([]);
-      setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '', showInWebsite: false });
+      setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '' });
       fetchResidents();
     } catch (error: any) {
       setAlertDialog({
@@ -120,7 +133,6 @@ const Residents = () => {
       phone_no: res.phone_no,
       monthlyRate: res.monthlyRate || 1000,
       avatar: res.avatar || '',
-      showInWebsite: res.showInWebsite || false,
     });
     setAvatarFiles([]); // Reset file input when editing (keeps existing URL if not changed)
     setIsFormOpen(true);
@@ -161,10 +173,10 @@ const Residents = () => {
         {isPresident && (
           <Button 
               variant="primary"
-              icon={{ left: <AddIcon className="size-5" /> }}
+              icon={{ left: <Icon type="add" className="text-[20px]" /> }}
               onClick={() => {
                   setEditingId(null);
-                  setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '', showInWebsite: false });
+                  setFormData({ name: '', residence: '', phone_no: '', monthlyRate: 1000, avatar: '' });
                   setAvatarFiles([]);
                   setIsFormOpen(true);
               }}
@@ -215,25 +227,36 @@ const Residents = () => {
                 onChange={(e) => setFormData({...formData, monthlyRate: parseFloat(e.target.value) || 0})}
                 placeholder="Enter monthly rate"
               />
-              <div className="flex flex-col justify-center px-4 py-3">
-                <Switch
-                  id="showInWebsite"
-                  label="Show in Website"
-                  hint="Publicly show this name on the frontend website."
-                  checked={formData.showInWebsite}
-                  onChange={(checked) => setFormData({...formData, showInWebsite: checked})}
-                />
-              </div>
               <div className="md:col-span-2">
-                <Upload 
-                  label="Profile Image"
-                  value={avatarFiles}
-                  onValueChange={handleAvatarChange}
-                  maxSizeInMB={2}
-                  accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
-                  multiple={false}
-                  hint="PNG, JPG, or JPEG up to 2MB. This image will represent the resident across the dashboard."
-                />
+                {formData.avatar ? (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-gray-100 font-medium text-sm">Profile Image</span>
+                    <div className="relative w-max mt-1">
+                      <img src={formData.avatar} alt="Profile Preview" className="size-32 object-cover rounded-xl border border-gray-400" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, avatar: '' });
+                          setAvatarFiles([]);
+                        }}
+                        className="absolute -top-3 -right-3 bg-red-200 text-white rounded-full hover:bg-red-100 transition-colors border-1 border-white"
+                        title="Remove Image"
+                      >
+                        <Icon type="remove" className="text-[20px]" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <Upload 
+                    label="Profile Image"
+                    value={avatarFiles}
+                    onValueChange={handleAvatarChange}
+                    maxSizeInMB={2}
+                    accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+                    multiple={false}
+                    hint="PNG, JPG, or JPEG up to 2MB. This image will represent the resident across the dashboard."
+                  />
+                )}
               </div>
             </div>
             <div className="flex gap-4">
@@ -264,10 +287,28 @@ const Residents = () => {
         ) : (
             <Table 
               data={editingId && isFormOpen ? residents.filter(r => r.id !== editingId) : residents}
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder="Search residents..."
               type="general"
               theme="orange"
               columns={['resident', 'residence', 'phone_no', 'monthlyRate', 'actions']}
               headers={['Resident', 'Apartment', 'Phone', 'Monthly Rate', 'Actions']}
+              sortColumn={sortColumn}
+              sortOrder={sortOrder}
+              onSortChange={(col) => {
+                if (col === 'actions') return;
+                if (sortColumn === col) {
+                   if (sortOrder === 'asc') setSortOrder('desc');
+                   else if (sortOrder === 'desc') {
+                     setSortOrder('');
+                     setSortColumn('');
+                   }
+                } else {
+                   setSortColumn(col);
+                   setSortOrder('asc');
+                }
+              }}
               minWidthClass="min-w-[600px]"
               showMonthlyFeeLegend={false}
               showYearlyFeeLegend={false}
@@ -276,13 +317,12 @@ const Residents = () => {
                   case 'resident':
                     return (
                       <div className="flex items-center gap-4">
-                        <div className="size-12 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center border border-gray-400 shrink-0">
-                          {res.avatar ? (
-                              <img src={res.avatar} alt={res.name} className="w-full h-full object-cover" />
-                          ) : (
-                              <PersonIcon className="text-gray-400" />
-                          )}
-                        </div>
+                        <Avatar className="size-12 border border-gray-400 shrink-0">
+                          <AvatarImage src={res.avatar || undefined} alt={res.name} />
+                          <AvatarFallback className="bg-gray-300">
+                            <Icon type="person" className="text-gray-400" />
+                          </AvatarFallback>
+                        </Avatar>
                         <span className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{res.name}</span>
                       </div>
                     );
